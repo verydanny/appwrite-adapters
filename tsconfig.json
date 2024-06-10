@@ -1,8 +1,10 @@
 {
     "extends": "./tsconfig.base.json",
     "references": [
-        { "path": "./packages/appwrite-adapter-bun" },
-        { "path": "./packages/appwrite-adapter-node" }
+        { "path": "./packages/adapter-astro" },
+        { "path": "./packages/adapter-bun" },
+        { "path": "./packages/adapter-node" },
+        { "path": "./packages/adapter-sveltekit" },
     ],
     "exclude": ["tsup.base.ts"]
 }
