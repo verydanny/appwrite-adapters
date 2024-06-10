@@ -9,7 +9,7 @@
     "package": "bun run types && bun run build"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.0",
+    "@biomejs/biome": "^1.8.1",
     "@types/bun": "latest"
   },
   "peerDependencies": {
