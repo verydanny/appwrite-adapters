@@ -1,7 +1,8 @@
 {
     "name": "@gravlabs/appwrite-adapter-node",
     "type": "module",
-    "module": "lib/main.jjs",
+    "main": "lib/main.js",
+    "module": "lib/main.js",
     "scripts": {
         "build": "tsup ./src/main.ts --format esm,cjs --experimentalDts --outDir lib"
     },

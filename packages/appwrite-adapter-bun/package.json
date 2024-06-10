@@ -1,6 +1,7 @@
 {
     "name": "@gravlabs/appwrite-adapter-bun",
     "type": "module",
+    "main": "lib/main.js",
     "module": "lib/main.js",
     "scripts": {
         "build": "tsup ./src/main.ts --format esm,cjs --experimentalDts --outDir lib"
