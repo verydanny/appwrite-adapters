@@ -14,8 +14,8 @@
 
         "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
+        "emitDeclarationOnly": true,
         "verbatimModuleSyntax": true,
-        "noEmit": true,
         "incremental": true,
         "forceConsistentCasingInFileNames": true,
 
