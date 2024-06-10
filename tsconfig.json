@@ -8,6 +8,5 @@
         { "path": "./packages/adapter-bun" },
         { "path": "./packages/adapter-node" },
         { "path": "./packages/adapter-sveltekit" },
-    ],
-    "exclude": ["tsup.base.ts"]
+    ]
 }
