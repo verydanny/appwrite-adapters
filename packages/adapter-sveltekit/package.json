@@ -12,5 +12,8 @@
     "devDependencies": {
         "typescript": "^5.4.5",
         "tsup": "^8.1.0"
+    },
+    "peerDependencies": {
+        "hono": "^4.4.4"
     }
 }
