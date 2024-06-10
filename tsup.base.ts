@@ -7,16 +7,5 @@ export const shared = (config?: Options | Options[]) =>
         splitting: false,
         sourcemap: true,
         clean: true,
-        async onSuccess() {
-            if (process.env.npm_lifecycle_event === "dev") {
-                const time = new Date()
-                utimes(
-                    "../../path-to-the/app-needs-to-rebuild/src/index.tsx",
-                    time,
-                    time,
-                    () => {},
-                )
-            }
-        },
         ...config,
     })
