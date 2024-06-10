@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "lint": "biome check --write .",
-    "build": "bun --filter '*' build"
+    "build": "bun --filter '*' build",
+    "types": "bun run tsc -b",
+    "package": "bun run types && bun run build"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.0",
