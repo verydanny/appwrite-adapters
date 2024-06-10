@@ -27,5 +27,5 @@
         "noUnusedParameters": true,
         "noPropertyAccessFromIndexSignature": true
     },
-    "references": [{ "path": "./packages/runtime-adapter-bun" }]
+    "references": [{ "path": "./packages/appwrite-adapter-bun" }]
 }
