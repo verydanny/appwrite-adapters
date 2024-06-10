@@ -2,9 +2,14 @@
     "name": "@gravlabs/appwrite-adapter-bun",
     "type": "module",
     "module": "lib/main.mjs",
+    "scripts": {
+        "build": "tsup"
+    },
+    "dependencies": {
+        "@gravlabs/appwrite-adapter-node": "workspace:*"
+    },
     "devDependencies": {
         "typescript": "^5.4.5",
         "tsup": "^8.1.0"
-    },
-    "private": false
+    }
 }

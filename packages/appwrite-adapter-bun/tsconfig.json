@@ -3,7 +3,9 @@
     "compilerOptions": {
         "rootDir": "src",
         "outDir": "lib",
-        "composite": true
+        "composite": true,
+        "tsBuildInfoFile": "lib/.tsbuildinfo"
     },
-    "include": ["src"]
+    "include": ["src"],
+    "references": [{ "path": "../appwrite-adapter-node" }]
 }

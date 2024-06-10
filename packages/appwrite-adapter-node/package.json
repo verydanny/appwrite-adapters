@@ -2,9 +2,11 @@
     "name": "@gravlabs/appwrite-adapter-node",
     "type": "module",
     "module": "lib/main.mjs",
+    "scripts": {
+        "build": "tsup"
+    },
     "devDependencies": {
         "typescript": "^5.4.5",
         "tsup": "^8.1.0"
-    },
-    "private": false
+    }
 }
