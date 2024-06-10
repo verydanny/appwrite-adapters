@@ -1,1 +1,3 @@
-console.log("Hello via Bun!");
+function someFuntion() {
+    const someVariable = "hello"
+}

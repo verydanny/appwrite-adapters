@@ -1,16 +1,14 @@
 {
-  "name": "appwrite-adapters",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@biomejs/biome": "1.8.0",
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.4.5"
-  },
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ]
+    "name": "appwrite-adapters",
+    "module": "index.ts",
+    "type": "module",
+    "devDependencies": {
+        "@biomejs/biome": "1.8.0",
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.4.5"
+    },
+    "private": true,
+    "workspaces": ["packages/*"]
 }
