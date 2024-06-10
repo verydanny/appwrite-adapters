@@ -1,8 +1,5 @@
 {
     "extends": "./tsconfig.base.json",
-    "compilerOptions": {
-        "allowImportingTsExtensions": true,
-    },
     "references": [
         { "path": "./packages/appwrite-adapter-bun" },
         { "path": "./packages/appwrite-adapter-node" }
