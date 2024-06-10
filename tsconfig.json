@@ -3,5 +3,6 @@
     "references": [
         { "path": "./packages/appwrite-adapter-bun" },
         { "path": "./packages/appwrite-adapter-node" }
-    ]
+    ],
+    "exclude": ["tsup.base.ts"]
 }

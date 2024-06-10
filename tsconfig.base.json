@@ -13,8 +13,8 @@
         "allowJs": true,
 
         "moduleResolution": "bundler",
-        "noEmit": true,
-        "declarationDir": "types",
+        "emitDeclarationOnly": true,
+        "allowImportingTsExtensions": true,
         "verbatimModuleSyntax": true,
         "forceConsistentCasingInFileNames": true,
 

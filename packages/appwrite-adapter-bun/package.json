@@ -4,7 +4,7 @@
     "main": "lib/main.js",
     "module": "lib/main.js",
     "scripts": {
-        "build": "tsup ./src/main.ts --format esm,cjs --experimentalDts --outDir lib"
+        "build": "tsup ./src/main.ts --format esm,cjs --outDir lib"
     },
     "dependencies": {
         "@gravlabs/appwrite-adapter-node": "workspace:*"
