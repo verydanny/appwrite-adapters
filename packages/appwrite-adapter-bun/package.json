@@ -1,9 +1,9 @@
 {
     "name": "@gravlabs/appwrite-adapter-bun",
     "type": "module",
-    "module": "lib/main.mjs",
+    "module": "lib/main.js",
     "scripts": {
-        "build": "tsup"
+        "build": "tsup ./src/main.ts --format esm,cjs --experimentalDts --outDir lib"
     },
     "dependencies": {
         "@gravlabs/appwrite-adapter-node": "workspace:*"

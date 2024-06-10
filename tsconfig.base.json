@@ -14,7 +14,7 @@
 
         "moduleResolution": "bundler",
         "verbatimModuleSyntax": true,
-        "incremental": true,
+        "emitDeclarationOnly": true,
         "forceConsistentCasingInFileNames": true,
 
         "strict": true,

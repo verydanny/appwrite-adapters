@@ -5,6 +5,5 @@ export const shared = (config?: Options | Options[]) => defineConfig({
     splitting: false,
     sourcemap: true,
     clean: true,
-    dts: true,
     ...config
 })
