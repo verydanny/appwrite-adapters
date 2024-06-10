@@ -1,5 +1,5 @@
 {
-    "name": "@gravlabs/appwrite-adapter-sveltekit",
+    "name": "@gravlabs/appwrite-adapter-node",
     "type": "module",
     "main": "lib/main.js",
     "module": "lib/main.js",

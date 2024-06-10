@@ -2,9 +2,7 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "rootDir": "src",
-        "outDir": "lib",
-        "composite": true
+        "outDir": "lib"
     },
-    "include": ["src"],
-    "references": [{ "path": "../adapter-node" }]
+    "include": ["src"]
 }
