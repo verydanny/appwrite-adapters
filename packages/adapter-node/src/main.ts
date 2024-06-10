@@ -8,9 +8,13 @@ interface Res {
 }
 
 export default function wrapper(app: import("hono").Hono) {
-    // Set up things for Hono here
+    // Set up Hono here, static file middleware etc.
 
-    return (req: Req, res: Res) => listener(app.fetch, req, res)
+    return async (req: Req, res: Res) => {
+        // Cache request and response here
+
+        return listener(app.fetch, req, res)
+    }
 }
 
 async function listener(
