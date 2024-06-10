@@ -1,0 +1,16 @@
+{
+    "name": "@gravlabs/appwrite-adapter-sveltekit",
+    "type": "module",
+    "main": "lib/main.js",
+    "module": "lib/main.js",
+    "scripts": {
+        "build": "tsup ./src/main.ts --format esm,cjs --outDir lib"
+    },
+    "dependencies": {
+        "@gravlabs/appwrite-adapter-node": "workspace:*"
+    },
+    "devDependencies": {
+        "typescript": "^5.4.5",
+        "tsup": "^8.1.0"
+    }
+}
