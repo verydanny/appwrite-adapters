@@ -1,29 +1,46 @@
-interface Req {
-    headers: Record<string, string>
-    url: string
-}
+import { Readable } from "node:stream"
+import { getRequestListener } from "./getRequestListener.js"
+import type { Context, CustomErrorHandler } from "./types.ts"
 
-interface Res {
-    json(obj?: Record<string, string>): void
-}
-
-export default function wrapper(app: import("hono").Hono) {
-    // Set up Hono here, static file middleware etc.
-
-    return async (req: Req, res: Res) => {
-        // Cache request and response here
-
-        return listener(app.fetch, req, res)
-    }
-}
-
-async function listener(
-    getResponse: import("hono").Hono['fetch'],
-    req: Req,
-    res: Res,
+export function serve(
+    app: import("hono").Hono,
+    options: {
+        hostname?: string
+        errorHandler?: CustomErrorHandler
+        overrideGlobalObjects?: boolean
+    } = {
+        overrideGlobalObjects: true,
+    },
 ) {
-    const createRequest = new Request(new URL(req.url))
-    const createResponse = await getResponse(createRequest)
+    const initializeListener = getRequestListener(app.fetch, options)
 
-    return res.json(await createResponse.json())
+    return async (context: Context) => {
+        const listener = initializeListener(context.error)
+
+        try {
+            const response = await listener(context.req, context.res)
+
+            if (response) {
+                const blob = await response.blob()
+
+                const headers = Object.fromEntries(response.headers.entries())
+
+                // This is only needed on Appwrite, if this isn't included
+                // then text and json-based routes will loop forever
+                if (!headers["content-length"] && blob.size) {
+                    headers["content-length"] = blob.size.toString()
+                }
+
+                headers["Cache-Control"] = "public,max-age=31536000"
+
+                return context.res.send(
+                    Readable.from(blob.stream()),
+                    200,
+                    headers,
+                )
+            }
+        } catch (e) {
+            context.error(e)
+        }
+    }
 }

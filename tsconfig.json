@@ -7,6 +7,6 @@
         { "path": "./packages/adapter-astro" },
         { "path": "./packages/adapter-bun" },
         { "path": "./packages/adapter-node" },
-        { "path": "./packages/adapter-sveltekit" },
+        { "path": "./packages/adapter-sveltekit" }
     ]
 }

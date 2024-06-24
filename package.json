@@ -9,8 +9,9 @@
     "package": "bun run types && bun run build"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.1",
-    "@types/bun": "latest"
+    "@biomejs/biome": "^1.8.2",
+    "@types/bun": "latest",
+    "@tsconfig/strictest": "^2.0.5"
   },
   "peerDependencies": {
     "typescript": "^5.4.5"
