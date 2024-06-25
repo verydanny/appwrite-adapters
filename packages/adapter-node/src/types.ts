@@ -93,15 +93,6 @@ export interface ReqContext {
     path: string
 }
 
-declare global {
-    namespace NodeJS {
-        interface ProcessEnv {
-            GELBOORU_API: string
-            GELBOORU_USER_ID: string
-        }
-    }
-}
-
 export interface ResContext {
     send: (
         body: Stream | string,
@@ -122,4 +113,12 @@ export interface Context {
     error: <T>(
         message: T | Record<string, T> | Array<T>,
     ) => void
+}
+
+declare global {
+    namespace NodeJS {
+        interface ProcessEnv {
+            // Custom process.env here
+        }
+    }
 }

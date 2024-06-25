@@ -19,10 +19,5 @@
   },
   "peerDependencies": {
     "hono": "^4.4.4"
-  },
-  "engines": {
-    "node": ">=20.14",
-    "npm": ">=10.5"
-  },
-  "packageManager": "bun@1.1.16"
+  }
 }
