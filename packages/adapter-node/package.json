@@ -1,5 +1,5 @@
 {
-  "name": "@gravlabs/appwrite-adapter-node",
+  "name": "@gravlabs/appwrite-hono-adapter-node",
   "type": "module",
   "main": "lib/main.js",
   "module": "lib/main.js",
@@ -8,12 +8,15 @@
     "build:watch": "bun run build --watch",
     "start": "nodemon --env-file=.env ./server/serve.cjs"
   },
+  "dependencies": {
+    "@mobily/ts-belt": "^3.13.1"
+  },
   "devDependencies": {
     "effection": "^3.0.3",
     "@tsconfig/node21": "^21.0.3",
     "tsup": "^8.1.0",
-    "typescript": "^5.5.2",
-    "@types/node": "^20.14.8",
+    "typescript": "^5.5.3",
+    "@types/node": "^20.14.9",
     "micro": "9.3.4",
     "nodemon": "^3.1.4"
   },

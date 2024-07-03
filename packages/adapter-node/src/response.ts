@@ -1,9 +1,11 @@
 // Define lightweight pseudo Response class and replace global.Response with it.
 
 import type { OutgoingHttpHeaders } from "node:http"
+import { A } from "@mobily/ts-belt"
 import { buildOutgoingHttpHeaders } from "./utils.ts"
+import type { Response as GlobalResponseType } from "undici-types"
 
-type BodyInit = import('undici-types').BodyInit
+type BodyInit = import("undici-types").BodyInit
 
 interface InternalBody {
     source: string | Uint8Array | FormData | Blob | null
@@ -11,33 +13,49 @@ interface InternalBody {
     length: number | null
 }
 
+export const cacheKey = Symbol("cache")
+export const GlobalResponse = global.Response
+
 const responseCache = Symbol("responseCache")
 const getResponseCache = Symbol("getResponseCache")
-export const cacheKey = Symbol("cache")
 
-export const GlobalResponse = global.Response
 export class Response {
     #body?: BodyInit | null
     #init?: ResponseInit;
 
-    [getResponseCache](): typeof GlobalResponse {
-        delete (this as any)[cacheKey]
-        return ((this as any)[responseCache] ||= new GlobalResponse(
+    [cacheKey]?: [
+        number,
+        BodyInit,
+        Record<string, string> | OutgoingHttpHeaders,
+    ];
+    [responseCache]?: GlobalResponseType;
+
+    [getResponseCache]() {
+        if (cacheKey in this) {
+            delete this[cacheKey]
+        }
+
+        // biome-ignore lint/suspicious/noAssignInExpressions: Easier to type knowing it will always be GlobalResponseType
+        return (this[responseCache] ||= new GlobalResponse(
             this.#body,
             this.#init,
         ))
     }
 
-    constructor(body: BodyInit | null, init: ResponseInit) {
+    constructor(body: BodyInit | null, init: ResponseInit | Response) {
         this.#body = body
+
         if (init instanceof Response) {
-            const cachedGlobalResponse = (init as any)[responseCache]
+            const cachedGlobalResponse = (init as Response)[responseCache]
+
             if (cachedGlobalResponse) {
                 this.#init = cachedGlobalResponse
                 // instantiate GlobalResponse cache and this object always returns value from global.Response
                 this[getResponseCache]()
                 return
-            } else {
+            }
+
+            if (init.#init) {
                 this.#init = init.#init
             }
         } else {
@@ -48,55 +66,64 @@ export class Response {
             typeof body === "string" ||
             typeof (body as ReadableStream)?.getReader !== "undefined"
         ) {
-            let headers = (init?.headers || {
+            let headers = ((init as ResponseInit)?.headers || {
                 "content-type": "text/plain; charset=UTF-8",
             }) as Record<string, string> | Headers | OutgoingHttpHeaders
+
             if (headers instanceof Headers) {
                 headers = buildOutgoingHttpHeaders(headers)
             }
-            ;(this as any)[cacheKey] = [init?.status || 200, body, headers]
+            this[cacheKey] = [
+                (init as ResponseInit)?.status || 200,
+                body,
+                headers,
+            ]
         }
     }
 }
-// biome-ignore lint/complexity/noForEach: Faster to do this
-;[
-    "body",
-    "bodyUsed",
-    "headers",
-    "ok",
-    "redirected",
-    "status",
-    "statusText",
-    "trailers",
-    "type",
-    "url",
-].forEach((k) => {
-    Object.defineProperty(Response.prototype, k, {
-        get() {
-            return this[getResponseCache]()[k]
-        },
-    })
-})
-// biome-ignore lint/complexity/noForEach: Faster to do this
-;["arrayBuffer", "blob", "clone", "formData", "json", "text"].forEach((k) => {
+
+A.forEach(
+    [
+        "body",
+        "bodyUsed",
+        "headers",
+        "ok",
+        "redirected",
+        "status",
+        "statusText",
+        "trailers",
+        "type",
+        "url",
+    ],
+    (k) => {
+        Object.defineProperty(Response.prototype, k, {
+            get() {
+                return this[getResponseCache]()[k]
+            },
+        })
+    },
+)
+A.forEach(["arrayBuffer", "blob", "clone", "formData", "json", "text"], (k) => {
     Object.defineProperty(Response.prototype, k, {
         value: function () {
             return this[getResponseCache]()[k]()
         },
     })
 })
+
 Object.setPrototypeOf(Response, GlobalResponse)
 Object.setPrototypeOf(Response.prototype, GlobalResponse.prototype)
 
 const stateKey = Reflect.ownKeys(new GlobalResponse()).find(
     (k) => typeof k === "symbol" && k.toString() === "Symbol(state)",
 ) as symbol | undefined
+
 if (!stateKey) {
     console.warn("Failed to find Response internal state key")
 }
 
 export function getInternalBody(
-    response: Response | typeof GlobalResponse,
+    response: Response | GlobalResponseType,
 ): InternalBody | undefined {
     if (!stateKey) {
         return
@@ -104,13 +131,14 @@ export function getInternalBody(
 
     if (response instanceof Response) {
         // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
-        response = (response as Response)[getResponseCache]()
+        response = response[getResponseCache]()
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: Hard to type a vague symbol
     const state = (response as any)[stateKey] as
         | { body?: InternalBody }
         | undefined
 
-    return (state && state.body) || undefined
+    return state?.body || undefined
 }

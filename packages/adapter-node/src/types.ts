@@ -79,9 +79,14 @@ export type CustomErrorHandler = (
     err: unknown,
 ) => void | Response | Promise<void | Response>
 
+type JSONStub = Record<string | number | symbol, unknown>
+
 export interface ReqContext {
-    bodyRaw: string
-    body: string
+    get body(): string | Buffer | JSONStub
+    get bodyRaw(): string
+    get bodyText(): string
+    get bodyJson(): JSONStub
+    get bodyBinary(): Buffer
     headers: Record<string, string>
     method: Request["method"]
     host: string

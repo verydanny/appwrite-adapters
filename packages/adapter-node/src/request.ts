@@ -1,3 +1,6 @@
+import { A } from "@mobily/ts-belt"
+
+import type { Request as GlobalRequestType } from "undici-types"
 import type { ReadableStream } from "node:stream/web"
 import type { ReqContext } from "./types.js"
 
@@ -41,6 +44,13 @@ export class Request extends GlobalRequest {
     }
 }
 
+export const getAbortController = Symbol("getAbortController")
+const getRequestCache = Symbol("getRequestCache")
+const requestCache = Symbol("requestCache")
+const incomingKey = Symbol("incomingKey")
+const urlKey = Symbol("urlKey")
+const abortControllerKey = Symbol("abortControllerKey")
+
 const newRequestFromIncoming = (
     method: string,
     url: string,
@@ -55,13 +65,6 @@ const newRequestFromIncoming = (
 
     return new Request(url, init)
 }
-
-const getRequestCache = Symbol("getRequestCache")
-const requestCache = Symbol("requestCache")
-const incomingKey = Symbol("incomingKey")
-const urlKey = Symbol("urlKey")
-const abortControllerKey = Symbol("abortControllerKey")
-export const getAbortController = Symbol("getAbortController")
 
 const requestPrototype: Record<string | symbol, any> = {
     get method() {
@@ -89,39 +92,46 @@ const requestPrototype: Record<string | symbol, any> = {
         ))
     },
 }
-// biome-ignore lint/complexity/noForEach: <explanation>
-;[
-    "body",
-    "bodyUsed",
-    "cache",
-    "credentials",
-    "destination",
-    "headers",
-    "integrity",
-    "mode",
-    "redirect",
-    "referrer",
-    "referrerPolicy",
-    "signal",
-    "keepalive",
-].forEach((k) => {
-    Object.defineProperty(requestPrototype, k, {
-        get() {
-            return this[getRequestCache]()[k]
-        },
-    })
-})
-// biome-ignore lint/complexity/noForEach: <explanation>
-;["arrayBuffer", "blob", "clone", "formData", "json", "text"].forEach((k) => {
+
+A.forEach(
+    [
+        "body",
+        "bodyUsed",
+        "cache",
+        "credentials",
+        "destination",
+        "headers",
+        "integrity",
+        "mode",
+        "redirect",
+        "referrer",
+        "referrerPolicy",
+        "signal",
+        "keepalive",
+    ],
+    (k) => {
+        Object.defineProperty(requestPrototype, k, {
+            get() {
+                return this[getRequestCache]()[k]
+            },
+        })
+    },
+)
+
+A.forEach(["arrayBuffer", "blob", "clone", "formData", "json", "text"], (k) => {
     Object.defineProperty(requestPrototype, k, {
         value: function () {
             return this[getRequestCache]()[k]()
         },
     })
 })
+
 Object.setPrototypeOf(requestPrototype, Request.prototype)
 
-export const newRequest = (incoming: ReqContext, defaultHostname?: string) => {
+export const newRequest = (
+    incoming: ReqContext,
+    defaultHostname?: string,
+): Request | GlobalRequestType => {
     const req = Object.create(requestPrototype)
     req[incomingKey] = incoming
 

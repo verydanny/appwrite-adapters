@@ -8,10 +8,13 @@ export function writeFromReadableStream(
 ) {
     if (stream.locked) {
         throw new TypeError("ReadableStream is locked.")
-    } else if (writable.destroyed) {
+    }
+    
+    if (writable.destroyed) {
         stream.cancel()
         return
     }
+
     const reader = stream.getReader()
     writable.on("close", cancel)
     writable.on("error", cancel)
@@ -49,7 +52,7 @@ export function writeFromReadableStream(
 }
 
 export const buildOutgoingHttpHeaders = (
-    headers: Headers,
+    headers: Response['headers'],
 ): OutgoingHttpHeaders => {
     const res: OutgoingHttpHeaders = {}
 

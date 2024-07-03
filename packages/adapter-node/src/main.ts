@@ -12,35 +12,35 @@ export function serve(
         overrideGlobalObjects: true,
     },
 ) {
-    const initializeListener = getRequestListener(app.fetch, options)
+    return getRequestListener(app.fetch, options)
 
-    return async (context: Context) => {
-        const listener = initializeListener(context.error)
+    // return async (context: Context) => {
+    //     const listener = initializeListener(context.error)
 
-        try {
-            const response = await listener(context.req, context.res)
+    //     try {
+    //         const response = await listener(context.req, context.res)
 
-            if (response) {
-                const blob = await response.blob()
+    //         if (response) {
+    //             const blob = await response.blob()
 
-                const headers = Object.fromEntries(response.headers.entries())
+    //             const headers = Object.fromEntries(response.headers.entries())
 
-                // This is only needed on Appwrite, if this isn't included
-                // then text and json-based routes will loop forever
-                if (!headers["content-length"] && blob.size) {
-                    headers["content-length"] = blob.size.toString()
-                }
+    //             // This is only needed on Appwrite, if this isn't included
+    //             // then text and json-based routes will loop forever
+    //             if (!headers["content-length"] && blob.size) {
+    //                 headers["content-length"] = blob.size.toString()
+    //             }
 
-                headers["Cache-Control"] = "public,max-age=31536000"
+    //             headers["Cache-Control"] = "public,max-age=31536000"
 
-                return context.res.send(
-                    Readable.from(blob.stream()),
-                    200,
-                    headers,
-                )
-            }
-        } catch (e) {
-            context.error(e)
-        }
-    }
+    //             return context.res.send(
+    //                 Readable.from(blob.stream()),
+    //                 200,
+    //                 headers,
+    //             )
+    //         }
+    //     } catch (e) {
+    //         context.error(e)
+    //     }
+    // }
 }
