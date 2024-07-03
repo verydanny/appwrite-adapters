@@ -8,5 +8,6 @@
         "outDir": "lib",
         "emitDeclarationOnly": true
     },
-    "include": ["src"]
+    "include": ["src"],
+    "exclude": ["lib"]
 }

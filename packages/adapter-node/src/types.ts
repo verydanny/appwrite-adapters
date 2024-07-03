@@ -20,7 +20,6 @@ import type {
     createServer as createHttpsServer,
     ServerOptions as HttpsServerOptions,
 } from "node:https"
-import type { Stream } from "node:stream"
 
 export type HttpBindings = {
     incoming: IncomingMessage
