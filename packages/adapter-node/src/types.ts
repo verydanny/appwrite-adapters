@@ -4,6 +4,7 @@ import type {
     Server,
     ServerOptions as HttpServerOptions,
     ServerResponse as HttpServerResponse,
+    OutgoingHttpHeaders,
 } from "node:http"
 import type {
     createSecureServer as createSecureHttp2Server,
@@ -100,24 +101,46 @@ export interface ReqContext {
 
 export interface ResContext {
     send: (
-        body: Stream | string,
+        body: Buffer | string,
         statusCode: Response["status"],
-        headers: Record<string, string>,
+        headers?: Record<string, string> | OutgoingHttpHeaders,
+    ) => void
+    text: (
+        body: string,
+        statusCode: Response["status"],
+        headers?: Record<string, string> | OutgoingHttpHeaders,
+    ) => void
+    binary: (
+        bytes: Buffer,
+        statusCode: Response["status"],
+        headers?: Record<string, string> | OutgoingHttpHeaders,
     ) => void
     json: (
-        body: Record<string, unknown>,
+        body: Record<string | number | symbol, unknown>,
         statusCode: Response["status"],
         headers?: Record<string, string>,
     ) => void
+    empty: () => void
+    redirect: (
+        url: string,
+        statusCode: Response["status"],
+        headers?: Record<string, string>,
+    ) => void
+    start: (
+        statusCode: Response["status"],
+        headers?: Record<string, string> | OutgoingHttpHeaders,
+    ) => void
+    writeText: (body: string) => void
+    writeJson: (body: Record<string | number | symbol, unknown>) => void
+    writeBinary: (bytes: Buffer | string) => void
+    end: (headers?: Record<string, string>) => void
 }
 
 export interface Context {
     req: ReqContext
     res: ResContext
     log: <T>(message: T | Record<string, T> | Array<T>) => void
-    error: <T>(
-        message: T | Record<string, T> | Array<T>,
-    ) => void
+    error: <T>(message: T | Record<string, T> | Array<T>) => void
 }
 
 declare global {

@@ -3,7 +3,6 @@
  * Request/Response https://github.com/honojs/node-server that speeds
  * up Node response by factor of 3
  */
-import { Readable } from "node:stream"
 // import type { OutgoingHttpHeaders } from "node:http"
 import {
     newRequest,
@@ -35,9 +34,11 @@ const handleFetchError = (e: unknown): Response =>
                 : 500,
     })
 
+// @ts-ignore
 const responseViaCache = (
     res: LightweightResponse,
     outgoing: Context["res"],
+    errorLogger: Context["error"],
 ) => {
     const [status, body, header] = (res as Required<LightweightResponse>)[
         cacheKey
@@ -46,14 +47,13 @@ const responseViaCache = (
     if (typeof body === "string") {
         header["Content-Length"] = Buffer.byteLength(body)
 
-        return outgoing.send(body, status, header as Record<string, string>)
+        outgoing.send(body, status, header as Record<string, string>)
+    } else {
+        outgoing.start(status, header)
+        return writeFromReadableStream(body as ReadableStream, outgoing)?.catch(
+            errorLogger,
+        )
     }
-
-    return outgoing.send(
-        Readable.from(body as ReadableStream),
-        status,
-        header as Record<string, string>,
-    )
 }
 
 const responseViaResponseObject = async (
@@ -63,7 +63,7 @@ const responseViaResponseObject = async (
         | LightweightResponse
         | Promise<LightweightResponse>,
     outgoing: Context["res"],
-    options: { errorHandler?: CustomErrorHandler } = {},
+    options: { errorHandler?: CustomErrorHandler | Context["error"] } = {},
 ) => {
     if (res instanceof Promise) {
         if (options.errorHandler) {
@@ -85,7 +85,11 @@ const responseViaResponseObject = async (
     }
 
     if (cacheKey in res) {
-        return responseViaCache(res as LightweightResponse, outgoing)
+        return responseViaCache(
+            res as LightweightResponse,
+            outgoing,
+            options?.errorHandler as Context["error"],
+        )
     }
 
     const resHeaderRecord = buildOutgoingHttpHeaders((res as Response).headers)
@@ -97,30 +101,21 @@ const responseViaResponseObject = async (
             resHeaderRecord["content-length"] = internalBody.length
         }
 
-        // open-runtime will soon support chunking, so this is a to-do
-        return outgoing.send(
-            internalBody.source,
-            (res as Response).status,
-            resHeaderRecord,
-        )
+        outgoing.start((res as Response).status, resHeaderRecord)
 
-        // outgoing.writeHead(res.status, resHeaderRecord)
-
-        // if (
-        //     typeof internalBody.source === "string" ||
-        //     internalBody.source instanceof Uint8Array
-        // ) {
-        //     outgoing.end(internalBody.source)
-        // } else if (internalBody.source instanceof Blob) {
-        //     outgoing.end(
-        //         new Uint8Array(await internalBody.source.arrayBuffer()),
-        //     )
-        // } else {
-        //     await writeFromReadableStream(internalBody.stream, outgoing)
-        // }
-    }
-    
-    if ((res as Response).body) {
+        if (
+            typeof internalBody.source === "string" ||
+            internalBody.source instanceof Uint8Array
+        ) {
+            outgoing.writeBinary(Buffer.from(internalBody.source))
+        } else if (internalBody.source instanceof Blob) {
+            outgoing.writeBinary(
+                Buffer.from(await internalBody.source.arrayBuffer()),
+            )
+        } else {
+            await writeFromReadableStream(internalBody.stream, outgoing)
+        }
+    } else if ((res as Response).body) {
         /**
          * If content-encoding is set, we assume that the response should be not decoded.
          * Else if transfer-encoding is set, we assume that the response should be streamed.
@@ -146,20 +141,31 @@ const responseViaResponseObject = async (
             (accelBuffering && regBuffer.test(accelBuffering as string)) ||
             !regContentType.test(contentType as string)
         ) {
-            return outgoing.send(res.body, (res as Response).status, resHeaderRecord)
+            // Send as a stream
+            outgoing.start((res as Response).status, resHeaderRecord)
+
+            if ((res as Response).body) {
+                await writeFromReadableStream(
+                    (res as Response).body as ReadableStream,
+                    outgoing,
+                )
+            }
+        } else {
+            const buffer = await (res as Response).arrayBuffer()
+            resHeaderRecord["content-length"] = buffer.byteLength
+
+            outgoing.binary(
+                Buffer.from(buffer),
+                (res as Response).status,
+                resHeaderRecord,
+            )
         }
-
-        const buffer = await (res as Response).arrayBuffer()
-        resHeaderRecord["content-length"] = buffer.byteLength
-
-        outgoing.writeHead(res.status, resHeaderRecord)
-        outgoing.end(new Uint8Array(buffer))
-    } else if (resHeaderRecord[X_ALREADY_SENT]) {
-        // do nothing, the response has already been sent
-    } else {
-        outgoing.writeHead(res.status, resHeaderRecord)
-        outgoing.end()
     }
+    // else if (resHeaderRecord[X_ALREADY_SENT]) {
+    //     // do nothing, the response has already been sent
+    // }
+
+    outgoing.empty()
 }
 
 export const getRequestListener = (
@@ -205,7 +211,7 @@ export const getRequestListener = (
                     | Promise<LightweightResponse>
 
                 if (cacheKey in res) {
-                    return responseViaCache(res, context.res)
+                    return responseViaCache(res, context.res, context.error)
                 }
             }
         } catch (e) {
@@ -218,7 +224,7 @@ export const getRequestListener = (
 
         try {
             if (res) {
-                return responseViaResponseObject(res, context.res)
+                return responseViaResponseObject(res, context.res, { errorHandler: context.error })
             }
         } catch (e) {
             return context.error(e)
