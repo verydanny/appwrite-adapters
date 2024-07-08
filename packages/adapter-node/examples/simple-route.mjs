@@ -1,6 +1,6 @@
-import { serve } from "../lib/main.js"
-import { serveStatic } from '../lib/serveStatic.js'
 import { Hono } from "hono"
+import { serve } from "@gravlabs/appwrite-hono-adapter-node"
+import { serveStatic } from "@gravlabs/appwrite-hono-adapter-node/serveStatic"
 
 const app = new Hono()
 

@@ -50,7 +50,7 @@ const responseViaCache = async (
         return outgoing.send(body, status, headers as Record<string, string>)
     }
 
-    return outgoing.binary(
+    return outgoing.send(
         await nodeWebStreamToBuffer(body as ReadableStream),
         status,
         headers,
@@ -114,7 +114,7 @@ const responseViaResponseObject = async (
             typeof internalBody.source === 'string' ||
             internalBody.source instanceof Uint8Array
         ) {
-            return outgoing.binary(
+            return outgoing.send(
                 Buffer.from(internalBody.source),
                 (res as Response).status,
                 resHeaderRecord,
@@ -122,7 +122,7 @@ const responseViaResponseObject = async (
         }
 
         if (internalBody.source instanceof Blob) {
-            return outgoing.binary(
+            return outgoing.send(
                 Buffer.from(await internalBody.source.arrayBuffer()),
                 (res as Response).status,
                 resHeaderRecord,
@@ -131,7 +131,7 @@ const responseViaResponseObject = async (
 
         // TODO: Future Stream
         // await writeFromReadableStream(internalBody.stream, outgoing)
-        return outgoing.binary(
+        return outgoing.send(
             await nodeWebStreamToBuffer(internalBody.stream),
             (res as Response).status,
             resHeaderRecord,
@@ -173,7 +173,7 @@ const responseViaResponseObject = async (
                 //     outgoing,
                 // )
 
-                return outgoing.binary(
+                return outgoing.send(
                     await nodeWebStreamToBuffer(
                         (res as Response).body as ReadableStream,
                     ),
@@ -185,7 +185,7 @@ const responseViaResponseObject = async (
             const buffer = await (res as Response).arrayBuffer()
             resHeaderRecord['content-length'] = buffer.byteLength
 
-            return outgoing.binary(
+            return outgoing.send(
                 Buffer.from(buffer),
                 (res as Response).status,
                 resHeaderRecord,
