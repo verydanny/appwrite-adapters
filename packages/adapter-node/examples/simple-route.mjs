@@ -1,7 +1,12 @@
-import { serve } from "../src/main"
+import { serve } from "../lib/main.js"
+import { serveStatic } from '../lib/serveStatic.js'
 import { Hono } from "hono"
 
 const app = new Hono()
+
+app.get("/static/*", serveStatic({
+    root: './examples',
+}))
 
 app.get("/", (context) =>
     context.html(`

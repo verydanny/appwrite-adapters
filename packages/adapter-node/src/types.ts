@@ -5,7 +5,7 @@ import type {
     ServerOptions as HttpServerOptions,
     ServerResponse as HttpServerResponse,
     OutgoingHttpHeaders,
-} from "node:http"
+} from 'node:http'
 import type {
     createSecureServer as createSecureHttp2Server,
     createServer as createHttp2Server,
@@ -15,11 +15,12 @@ import type {
     Http2SecureServer,
     SecureServerOptions as SecureHttp2ServerOptions,
     ServerOptions as Http2ServerOptions,
-} from "node:http2"
+} from 'node:http2'
 import type {
     createServer as createHttpsServer,
     ServerOptions as HttpsServerOptions,
-} from "node:https"
+} from 'node:https'
+import type { Stream } from 'node:stream'
 
 export type HttpBindings = {
     incoming: IncomingMessage
@@ -88,7 +89,7 @@ export interface ReqContext {
     get bodyJson(): JSONStub
     get bodyBinary(): Buffer
     headers: Record<string, string>
-    method: Request["method"]
+    method: Request['method']
     host: string
     scheme: string
     query: Record<string, string>
@@ -101,36 +102,36 @@ export interface ReqContext {
 export interface ResContext {
     send: (
         body: Buffer | string,
-        statusCode: Response["status"],
+        statusCode: Response['status'],
         headers?: Record<string, string> | OutgoingHttpHeaders,
     ) => void
     text: (
         body: string,
-        statusCode: Response["status"],
+        statusCode: Response['status'],
         headers?: Record<string, string> | OutgoingHttpHeaders,
     ) => void
     binary: (
-        bytes: Buffer,
-        statusCode: Response["status"],
+        bytes: Buffer | Stream,
+        statusCode: Response['status'],
         headers?: Record<string, string> | OutgoingHttpHeaders,
     ) => void
     json: (
-        body: Record<string | number | symbol, unknown>,
-        statusCode: Response["status"],
+        body: JSONStub,
+        statusCode: Response['status'],
         headers?: Record<string, string>,
     ) => void
     empty: () => void
     redirect: (
         url: string,
-        statusCode: Response["status"],
+        statusCode: Response['status'],
         headers?: Record<string, string>,
     ) => void
     start: (
-        statusCode: Response["status"],
+        statusCode: Response['status'],
         headers?: Record<string, string> | OutgoingHttpHeaders,
     ) => void
     writeText: (body: string) => void
-    writeJson: (body: Record<string | number | symbol, unknown>) => void
+    writeJson: (body: JSONStub) => void
     writeBinary: (bytes: Buffer | string) => void
     end: (headers?: Record<string, string>) => void
 }
@@ -138,8 +139,8 @@ export interface ResContext {
 export interface Context {
     req: ReqContext
     res: ResContext
-    log: <T>(message: T | Record<string, T> | Array<T>) => void
-    error: <T>(message: T | Record<string, T> | Array<T>) => void
+    log: (message: unknown | JSONStub) => void
+    error: (message: unknown | JSONStub) => void
 }
 
 declare global {

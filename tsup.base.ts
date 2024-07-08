@@ -5,6 +5,8 @@ export const shared = (config?: Options | Options[]) =>
         entry: ["src/**/*.{ts,tsx}"],
         splitting: false,
         sourcemap: true,
-        clean: true,
+        clean: false,
+        format: ['esm', 'cjs'],
+        shims: true,
         ...config,
     })

@@ -1,24 +1,49 @@
 {
   "name": "@gravlabs/appwrite-hono-adapter-node",
+  "version": "0.1.0",
   "type": "module",
   "main": "lib/main.js",
   "module": "lib/main.js",
   "scripts": {
-    "build": "tsup ./src/main.ts --format esm,cjs --outDir lib",
+    "build": "tsup",
     "build:watch": "bun run build --watch",
-    "start": "nodemon --env-file=.env ./server/serve.cjs"
+    "start": "nodemon --env-file=.env ./server/server.cjs",
+    "publish": "bun run tsc -b && bun run build"
   },
-  "dependencies": {
-    "@mobily/ts-belt": "^3.13.1"
+  "exports": {
+    ".": {
+      "types": "./lib/main.d.ts",
+      "require": "./lib/main.cjs",
+      "import": "./lib/main.js"
+    },
+    "./serveStatic": {
+      "types": "./lib/serveStatic.d.ts",
+      "require": "./lib/serveStatic.cjs",
+      "import": "./lib/serveStatic.js"
+    }
   },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./lib/main.d.ts"
+      ],
+      "serve-static": [
+        "./lib/serveStatic.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "lib",
+    "!lib/*.d.ts.map"
+  ],
   "devDependencies": {
-    "effection": "^3.0.3",
+    "@mobily/ts-belt": "^3.13.1",
     "@tsconfig/node21": "^21.0.3",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
-    "@types/node": "^20.14.9",
+    "@types/node": "^20.14.10",
     "micro": "9.3.4",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3"
   },
   "peerDependencies": {
     "hono": "^4.4.4"

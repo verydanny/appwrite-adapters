@@ -1,8 +1,8 @@
-import { getRequestListener } from "./getRequestListener.js"
-import type { CustomErrorHandler } from "./types.ts"
+import { getRequestListener } from './getRequestListener.ts'
+import type { CustomErrorHandler } from './types.ts'
 
 export function serve(
-    app: import("hono").Hono,
+    app: import('hono').Hono,
     options: {
         hostname?: string
         errorHandler?: CustomErrorHandler

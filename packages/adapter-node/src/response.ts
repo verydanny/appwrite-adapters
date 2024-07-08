@@ -1,11 +1,9 @@
 // Define lightweight pseudo Response class and replace global.Response with it.
+import { A } from '@mobily/ts-belt'
+import { buildOutgoingHttpHeaders } from './utils.ts'
 
-import type { OutgoingHttpHeaders } from "node:http"
-import { A } from "@mobily/ts-belt"
-import { buildOutgoingHttpHeaders } from "./utils.ts"
-import type { Response as GlobalResponseType } from "undici-types"
-
-type BodyInit = import("undici-types").BodyInit
+import type { OutgoingHttpHeaders } from 'node:http'
+import type { Response as GlobalResponseType, BodyInit } from 'undici-types'
 
 interface InternalBody {
     source: string | Uint8Array | FormData | Blob | null
@@ -13,11 +11,11 @@ interface InternalBody {
     length: number | null
 }
 
-export const cacheKey = Symbol("cache")
+export const cacheKey = Symbol('cache')
 export const GlobalResponse = global.Response
 
-const responseCache = Symbol("responseCache")
-const getResponseCache = Symbol("getResponseCache")
+const responseCache = Symbol('responseCache')
+const getResponseCache = Symbol('getResponseCache')
 
 export class Response {
     #body?: BodyInit | null
@@ -31,9 +29,7 @@ export class Response {
     [responseCache]?: GlobalResponseType;
 
     [getResponseCache]() {
-        if (cacheKey in this) {
-            delete this[cacheKey]
-        }
+        delete this[cacheKey]
 
         // biome-ignore lint/suspicious/noAssignInExpressions: Easier to type knowing it will always be GlobalResponseType
         return (this[responseCache] ||= new GlobalResponse(
@@ -63,11 +59,11 @@ export class Response {
         }
 
         if (
-            typeof body === "string" ||
-            typeof (body as ReadableStream)?.getReader !== "undefined"
+            typeof body === 'string' ||
+            typeof (body as ReadableStream)?.getReader !== 'undefined'
         ) {
             let headers = ((init as ResponseInit)?.headers || {
-                "content-type": "text/plain; charset=UTF-8",
+                'content-type': 'text/plain; charset=UTF-8',
             }) as Record<string, string> | Headers | OutgoingHttpHeaders
 
             if (headers instanceof Headers) {
@@ -84,16 +80,16 @@ export class Response {
 
 A.forEach(
     [
-        "body",
-        "bodyUsed",
-        "headers",
-        "ok",
-        "redirected",
-        "status",
-        "statusText",
-        "trailers",
-        "type",
-        "url",
+        'body',
+        'bodyUsed',
+        'headers',
+        'ok',
+        'redirected',
+        'status',
+        'statusText',
+        'trailers',
+        'type',
+        'url',
     ],
     (k) => {
         Object.defineProperty(Response.prototype, k, {
@@ -103,7 +99,8 @@ A.forEach(
         })
     },
 )
-A.forEach(["arrayBuffer", "blob", "clone", "formData", "json", "text"], (k) => {
+
+A.forEach(['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'], (k) => {
     Object.defineProperty(Response.prototype, k, {
         value: function () {
             return this[getResponseCache]()[k]()
@@ -115,11 +112,11 @@ Object.setPrototypeOf(Response, GlobalResponse)
 Object.setPrototypeOf(Response.prototype, GlobalResponse.prototype)
 
 const stateKey = Reflect.ownKeys(new GlobalResponse()).find(
-    (k) => typeof k === "symbol" && k.toString() === "Symbol(state)",
+    (k) => typeof k === 'symbol' && k.toString() === 'Symbol(state)',
 ) as symbol | undefined
 
 if (!stateKey) {
-    console.warn("Failed to find Response internal state key")
+    console.warn('Failed to find Response internal state key')
 }
 
 export function getInternalBody(

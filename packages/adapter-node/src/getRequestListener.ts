@@ -8,19 +8,19 @@ import {
     newRequest,
     toRequestError,
     Request as LightweightRequest,
-} from "./request.ts"
+} from './request.ts'
 import {
     cacheKey,
     getInternalBody,
     Response as LightweightResponse,
-} from "./response.ts"
-import { writeFromReadableStream, buildOutgoingHttpHeaders } from "./utils.ts"
+} from './response.ts'
+import { buildOutgoingHttpHeaders, nodeWebStreamToBuffer } from './utils.ts'
 import type {
     Context,
     CustomErrorHandler,
     FetchCallback,
     HttpBindings,
-} from "./types.js"
+} from './types.js'
 
 const regBuffer = /^no$/i
 const regContentType = /^(application\/json\b|text\/(?!event-stream\b))/i
@@ -29,31 +29,38 @@ const handleFetchError = (e: unknown): Response =>
     new Response(null, {
         status:
             e instanceof Error &&
-            (e.name === "TimeoutError" || e.constructor.name === "TimeoutError")
+            (e.name === 'TimeoutError' || e.constructor.name === 'TimeoutError')
                 ? 504 // timeout error emits 504 timeout
                 : 500,
     })
 
-// @ts-ignore
-const responseViaCache = (
+const responseViaCache = async (
     res: LightweightResponse,
-    outgoing: Context["res"],
-    errorLogger: Context["error"],
+    outgoing: Context['res'],
+    // @ts-ignore
+    errorLogger: Context['error'],
 ) => {
-    const [status, body, header] = (res as Required<LightweightResponse>)[
+    const [status, body, headers] = (res as Required<LightweightResponse>)[
         cacheKey
     ]
 
-    if (typeof body === "string") {
-        header["Content-Length"] = Buffer.byteLength(body)
+    if (typeof body === 'string') {
+        headers['Content-Length'] = Buffer.byteLength(body)
 
-        outgoing.send(body, status, header as Record<string, string>)
-    } else {
-        outgoing.start(status, header)
-        return writeFromReadableStream(body as ReadableStream, outgoing)?.catch(
-            errorLogger,
-        )
+        return outgoing.send(body, status, headers as Record<string, string>)
     }
+
+    return outgoing.binary(
+        await nodeWebStreamToBuffer(body as ReadableStream),
+        status,
+        headers,
+    )
+
+    // TODO: Future Stream
+    // outgoing.start(status, header)
+    // return writeFromReadableStream(body as ReadableStream, outgoing)?.catch(
+    //     errorLogger,
+    // )
 }
 
 const responseViaResponseObject = async (
@@ -62,8 +69,8 @@ const responseViaResponseObject = async (
         | Promise<Response>
         | LightweightResponse
         | Promise<LightweightResponse>,
-    outgoing: Context["res"],
-    options: { errorHandler?: CustomErrorHandler | Context["error"] } = {},
+    outgoing: Context['res'],
+    options: { errorHandler?: CustomErrorHandler | Context['error'] } = {},
 ) => {
     if (res instanceof Promise) {
         if (options.errorHandler) {
@@ -88,7 +95,7 @@ const responseViaResponseObject = async (
         return responseViaCache(
             res as LightweightResponse,
             outgoing,
-            options?.errorHandler as Context["error"],
+            options?.errorHandler as Context['error'],
         )
     }
 
@@ -98,24 +105,40 @@ const responseViaResponseObject = async (
     const internalBody = getInternalBody(res as Response)
     if (internalBody) {
         if (internalBody.length) {
-            resHeaderRecord["content-length"] = internalBody.length
+            resHeaderRecord['content-length'] = internalBody.length
         }
 
-        outgoing.start((res as Response).status, resHeaderRecord)
-
+        // TODO: Future Stream
+        // outgoing.start((res as Response).status, resHeaderRecord)
         if (
-            typeof internalBody.source === "string" ||
+            typeof internalBody.source === 'string' ||
             internalBody.source instanceof Uint8Array
         ) {
-            outgoing.writeBinary(Buffer.from(internalBody.source))
-        } else if (internalBody.source instanceof Blob) {
-            outgoing.writeBinary(
-                Buffer.from(await internalBody.source.arrayBuffer()),
+            return outgoing.binary(
+                Buffer.from(internalBody.source),
+                (res as Response).status,
+                resHeaderRecord,
             )
-        } else {
-            await writeFromReadableStream(internalBody.stream, outgoing)
         }
-    } else if ((res as Response).body) {
+
+        if (internalBody.source instanceof Blob) {
+            return outgoing.binary(
+                Buffer.from(await internalBody.source.arrayBuffer()),
+                (res as Response).status,
+                resHeaderRecord,
+            )
+        }
+
+        // TODO: Future Stream
+        // await writeFromReadableStream(internalBody.stream, outgoing)
+        return outgoing.binary(
+            await nodeWebStreamToBuffer(internalBody.stream),
+            (res as Response).status,
+            resHeaderRecord,
+        )
+    }
+
+    if ((res as Response).body) {
         /**
          * If content-encoding is set, we assume that the response should be not decoded.
          * Else if transfer-encoding is set, we assume that the response should be streamed.
@@ -126,11 +149,11 @@ const responseViaResponseObject = async (
          */
 
         const {
-            "transfer-encoding": transferEncoding,
-            "content-encoding": contentEncoding,
-            "content-length": contentLength,
-            "x-accel-buffering": accelBuffering,
-            "content-type": contentType,
+            'transfer-encoding': transferEncoding,
+            'content-encoding': contentEncoding,
+            'content-length': contentLength,
+            'x-accel-buffering': accelBuffering,
+            'content-type': contentType,
         } = resHeaderRecord
 
         if (
@@ -141,31 +164,36 @@ const responseViaResponseObject = async (
             (accelBuffering && regBuffer.test(accelBuffering as string)) ||
             !regContentType.test(contentType as string)
         ) {
-            // Send as a stream
-            outgoing.start((res as Response).status, resHeaderRecord)
-
+            // TODO: Future Stream
+            // outgoing.start((res as Response).status, resHeaderRecord)
             if ((res as Response).body) {
-                await writeFromReadableStream(
-                    (res as Response).body as ReadableStream,
-                    outgoing,
+                // TODO: Future Stream
+                // await writeFromReadableStream(
+                //     (res as Response).body as ReadableStream,
+                //     outgoing,
+                // )
+
+                return outgoing.binary(
+                    await nodeWebStreamToBuffer(
+                        (res as Response).body as ReadableStream,
+                    ),
+                    (res as Response).status,
+                    resHeaderRecord,
                 )
             }
         } else {
             const buffer = await (res as Response).arrayBuffer()
-            resHeaderRecord["content-length"] = buffer.byteLength
+            resHeaderRecord['content-length'] = buffer.byteLength
 
-            outgoing.binary(
+            return outgoing.binary(
                 Buffer.from(buffer),
                 (res as Response).status,
                 resHeaderRecord,
             )
         }
     }
-    // else if (resHeaderRecord[X_ALREADY_SENT]) {
-    //     // do nothing, the response has already been sent
-    // }
 
-    outgoing.empty()
+    return outgoing.empty()
 }
 
 export const getRequestListener = (
@@ -180,10 +208,10 @@ export const getRequestListener = (
         options.overrideGlobalObjects !== false &&
         global.Request !== LightweightRequest
     ) {
-        Object.defineProperty(global, "Request", {
+        Object.defineProperty(global, 'Request', {
             value: LightweightRequest,
         })
-        Object.defineProperty(global, "Response", {
+        Object.defineProperty(global, 'Response', {
             value: LightweightResponse,
         })
     }
@@ -204,6 +232,8 @@ export const getRequestListener = (
                 res = fetchCallback(req, {
                     incoming: context.req,
                     outgoing: context.res,
+                    error: context.error,
+                    log: context.log
                 } as unknown as HttpBindings) as
                     | Response
                     | LightweightResponse
@@ -224,7 +254,9 @@ export const getRequestListener = (
 
         try {
             if (res) {
-                return responseViaResponseObject(res, context.res, { errorHandler: context.error })
+                return responseViaResponseObject(res, context.res, {
+                    errorHandler: context.error,
+                })
             }
         } catch (e) {
             return context.error(e)
