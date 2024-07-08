@@ -32,6 +32,15 @@
       ]
     }
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-node",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/verydanny/appwrite-adapters.git"
+  },
   "files": [
     "lib",
     "!lib/*.d.ts.map"
