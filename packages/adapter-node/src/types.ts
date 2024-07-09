@@ -101,7 +101,7 @@ export interface ReqContext {
 
 export interface ResContext {
     send: (
-        body: Buffer | string,
+        body: Stream | Buffer | string,
         statusCode: Response['status'],
         headers?: Record<string, string> | OutgoingHttpHeaders,
     ) => void

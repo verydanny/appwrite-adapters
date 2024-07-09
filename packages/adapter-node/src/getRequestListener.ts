@@ -14,6 +14,7 @@ import {
     getInternalBody,
     Response as LightweightResponse,
 } from './response.ts'
+// @ts-ignore
 import { buildOutgoingHttpHeaders, nodeWebStreamToBuffer } from './utils.ts'
 import type {
     Context,
@@ -21,6 +22,7 @@ import type {
     FetchCallback,
     HttpBindings,
 } from './types.js'
+import { Readable } from 'node:stream'
 
 const regBuffer = /^no$/i
 const regContentType = /^(application\/json\b|text\/(?!event-stream\b))/i
@@ -47,11 +49,15 @@ const responseViaCache = async (
     if (typeof body === 'string') {
         headers['Content-Length'] = Buffer.byteLength(body)
 
-        return outgoing.send(body, status, headers as Record<string, string>)
+        return outgoing.send(
+            Buffer.from(body),
+            status,
+            headers as Record<string, string>,
+        )
     }
 
     return outgoing.send(
-        await nodeWebStreamToBuffer(body as ReadableStream),
+        Readable.from(body as ReadableStream),
         status,
         headers,
     )
@@ -132,7 +138,7 @@ const responseViaResponseObject = async (
         // TODO: Future Stream
         // await writeFromReadableStream(internalBody.stream, outgoing)
         return outgoing.send(
-            await nodeWebStreamToBuffer(internalBody.stream),
+            Readable.from(internalBody.stream),
             (res as Response).status,
             resHeaderRecord,
         )
@@ -174,9 +180,7 @@ const responseViaResponseObject = async (
                 // )
 
                 return outgoing.send(
-                    await nodeWebStreamToBuffer(
-                        (res as Response).body as ReadableStream,
-                    ),
+                    Readable.from((res as Response).body as ReadableStream),
                     (res as Response).status,
                     resHeaderRecord,
                 )
@@ -233,7 +237,7 @@ export const getRequestListener = (
                     incoming: context.req,
                     outgoing: context.res,
                     error: context.error,
-                    log: context.log
+                    log: context.log,
                 } as unknown as HttpBindings) as
                     | Response
                     | LightweightResponse
