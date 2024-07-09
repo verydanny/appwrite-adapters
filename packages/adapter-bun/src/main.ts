@@ -1,27 +1,89 @@
-import type { Hono } from "hono";
-import type { Context } from "./types";
+import type { Hono } from 'hono'
+import type { Context } from './types'
+
+const newRequestFromIncoming = (
+    method: string,
+    url: string,
+    incoming: Context['req'],
+    abortController: AbortController,
+) => {
+    const init: RequestInit = {
+        method,
+        headers: incoming.headers,
+        signal: abortController.signal,
+    }
+
+    if (method === 'TRACE') {
+        init.method = 'GET'
+        const req = new Request(url, init)
+
+        Object.defineProperty(req, 'method', {
+            get() {
+                return 'TRACE'
+            },
+        })
+
+        return req
+    }
+
+    return new Request(url, init)
+}
 
 export function serve(app: Hono) {
     return async function handle(context: Context) {
-        const url = new URL(context.req.url)
-        const request = app.fetch(new Request(url))
+        console.log(context.req)
+        const host = context.req.host
 
-        if (request instanceof Promise) {
-            const unwrappedRequest = await request
+        try {
+            const url = new URL(context.req.url)
 
-            return context.res.send(
-                await unwrappedRequest.arrayBuffer(),
-                unwrappedRequest.status,
-                unwrappedRequest.headers.toJSON()
+            if (
+                url.hostname.length !== host.length &&
+                url.hostname !== host.replace(/:\d+$/, '')
+            ) {
+                return context.error('Invalid host header')
+            }
+
+            const requestInit = newRequestFromIncoming(
+                context.req.method,
+                url.href,
+                context.req,
+                new AbortController(),
             )
-        }
 
-        if (request.body instanceof ReadableStream) {
+            const request = app.fetch(requestInit)
+
+            if (request instanceof Promise) {
+                try {
+                    const unwrappedRequest = await request
+
+                    return context.res.send(
+                        await unwrappedRequest.arrayBuffer(),
+                        unwrappedRequest.status,
+                        unwrappedRequest.headers.toJSON(),
+                    )
+                } catch (error) {
+                    return context.error(error)
+                }
+            }
+
+            if (request.body instanceof ReadableStream) {
+                return context.res.send(
+                    request.body,
+                    request.status,
+                    request.headers.toJSON(),
+                )
+            }
+
             return context.res.send(
-                request.body,
+                await request.arrayBuffer(),
                 request.status,
-                request.headers.toJSON()
+                request.headers.toJSON(),
             )
+        } catch (error) {
+            context.error(error)
         }
+
+        return context.res.empty()
     }
 }
