@@ -1,8 +1,4 @@
-
-
 name: ci-adapter-node
-env:
-  PATH: './packages/adapter-node'
 on:
   push:
     branches: [main]
@@ -12,6 +8,9 @@ on:
     branches: ['*']
     paths:
       - 'packages/adapter-node/**'
+
+env:
+  PATH: './packages/adapter-node'
 
 jobs:
   ci:
