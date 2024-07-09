@@ -1,13 +1,53 @@
 {
-    "name": "@gravlabs/appwrite-adapter-bun",
+    "name": "@gravlabs/appwrite-hono-adapter-bun",
+    "version": "0.0.1",
     "type": "module",
     "main": "lib/main.js",
     "module": "lib/main.js",
     "scripts": {
-        "build": "tsup ./src/main.ts --format esm,cjs --outDir lib"
+      "build": "tsup",
+      "build:watch": "bun run build --watch",
+      "start": "nodemon --env-file=.env ./server/server.cjs",
+      "publish": "bun run tsc -b && bun run build"
     },
+    "exports": {
+      ".": {
+        "types": "./lib/main.d.ts",
+        "require": "./lib/main.cjs",
+        "import": "./lib/main.js"
+      }
+    },
+    "typesVersions": {
+      "*": {
+        ".": [
+          "./lib/main.d.ts"
+        ]
+      }
+    },
+    "publishConfig": {
+      "registry": "https://registry.npmjs.org",
+      "access": "public"
+    },
+    "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-bun",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/verydanny/appwrite-adapters.git"
+    },
+    "files": [
+      "lib",
+      "!lib/*.d.ts.map"
+    ],
     "devDependencies": {
-        "typescript": "^5.4.5",
-        "tsup": "^8.1.0"
+      "@mobily/ts-belt": "^3.13.1",
+      "@tsconfig/node21": "^21.0.3",
+      "@types/node": "^20.14.10",
+      "micro": "9.3.4",
+      "nodemon": "^3.1.4",
+      "tsup": "^8.1.0",
+      "typescript": "^5.5.3"
+    },
+    "peerDependencies": {
+      "hono": "^4.4.12"
     }
-}
+  }
+  

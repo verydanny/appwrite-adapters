@@ -38,9 +38,9 @@ You can install it from the npm registry:
   yarn add hono @gravlabs/appwrite-hono-adapter-node
   ```
 
-* **bun**:
+* **pnpm**:
   ```sh
-  bun add hono @gravlabs/appwrite-hono-adapter-node
+  pnpm add hono @gravlabs/appwrite-hono-adapter-node
   ```
 
 ## Usage
