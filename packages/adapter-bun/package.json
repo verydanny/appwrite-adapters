@@ -12,7 +12,8 @@
       "lint": "biome lint ./src",
       "lint:fix": "biome lint --write ./src",
       "format": "biome format --write ./src",
-      "format:fix": "biome format --write ./src"
+      "format:fix": "biome format --write ./src",
+      "start": "OPEN_RUNTIMES_ENTRYPOINT=test.ts bun run --watch --hot server/server.ts"
     },
     "exports": {
       ".": {
