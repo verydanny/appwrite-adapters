@@ -20,9 +20,9 @@ jobs:
           bun-version: "latest"
 
       - run: bun install --frozen-lockfile
-      - run: bun run build
-      - run: bun run lint
-      - run: bun run format
+      - run: bun --filter packages/adapter-node build
+      - run: bun --filter packages/adapter-node lint
+      - run: bun --filter packages/adapter-node format
 
 
     
