@@ -53,6 +53,7 @@
   "devDependencies": {
     "@mobily/ts-belt": "^3.13.1",
     "@tsconfig/node21": "^21.0.3",
+    "@types/node": "^20.14.10",
     "@biomejs/biome": "^1.8.3",
     "nodemon": "^3.1.4",
     "publint": "^0.2.8",
