@@ -1,32 +1,36 @@
+env:
+  PATH: './packages/adapter-node'
+
 name: ci-adapter-node
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/adapter-node/**'
+      - '${{ env.PATH }}/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/adapter-node/**'
+      - '${{ env.PATH }}/**'
 
 jobs:
   ci:
-    name: build-and-lint
+    name: Build and Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "latest"
+      - name: Pull Branch
+        uses: actions/checkout@v4
 
-      - run: bun install --frozen-lockfile
-      - run: bun --filter ./packages/adapter-node build
-      - run: bun --filter ./packages/adapter-node build:types
-      - run: bun --filter ./packages/adapter-node lint
-      - run: bun --filter ./packages/adapter-node format
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
 
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
 
-    
-    
-    
+      - name: Build Package
+        run: bun --filter ${{ env.PATH }} build
 
+      - name: Build Types
+        run: bun --filter ${{ env.PATH }} build:types
+
+      - name: Lint Package
+        run: bun --filter ${{ env.PATH }} lint
