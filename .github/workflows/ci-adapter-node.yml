@@ -1,16 +1,17 @@
-env:
-  PATH: './packages/adapter-node'
+
 
 name: ci-adapter-node
+env:
+  PATH: './packages/adapter-node'
 on:
   push:
     branches: [main]
     paths:
-      - '${{ env.PATH }}/**'
+      - 'packages/adapter-node/**'
   pull_request:
     branches: ['*']
     paths:
-      - '${{ env.PATH }}/**'
+      - 'packages/adapter-node/**'
 
 jobs:
   ci:
