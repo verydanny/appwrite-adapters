@@ -14,7 +14,7 @@ env:
 
 jobs:
   ci:
-    name: Build and Lint
+    name: Build and Lint adapter-node
     runs-on: ubuntu-latest
     steps:
       - name: Pull Branch
