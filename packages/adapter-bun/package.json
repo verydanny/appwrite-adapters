@@ -6,7 +6,13 @@
     "module": "lib/main.js",
     "scripts": {
       "build": "tsup",
-      "build:watch": "tsup --watch"
+      "build:types": "tsc -b",
+      "postbuild:types": "publint",
+      "build:watch": "tsup --watch",
+      "lint": "biome lint ./src",
+      "lint:fix": "biome lint --write ./src",
+      "format": "biome format --write ./src",
+      "format:fix": "biome format --write ./src"
     },
     "exports": {
       ".": {
@@ -38,6 +44,8 @@
     "devDependencies": {
       "@mobily/ts-belt": "^3.13.1",
       "@tsconfig/bun": "1.0.7",
+      "@biomejs/biome": "^1.8.3",
+      "publint": "^0.2.8",
       "@types/bun": "latest",
       "tsup": "^8.1.0",
       "typescript": "^5.5.3"
