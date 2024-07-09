@@ -1,24 +1,26 @@
 # Appwrite Hono Adapter
 
-This adapter allows you to run your Hono application on Appwrite's `node-21.0` runtime. Please carefully read the **`Requirements`**.
+This adapter allows you to run your Hono application on Appwrite's `node-21.0` runtime. **Caution:** this library is in active development and the API is subject to change.
+
+> [!NOTE]
+> Please carefully read the **[Requirements](#requirements)**. Certain versions of this library will work with select Appwrite `node-21.0+` runtimes.
 
 <details>
 <summary><strong>Table of Contents</strong></summary>
 
-- [Appwrite Hono Adapter](#appwrite-hono-adapter)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Options](#options)
-      - [overrideGlobalObjects](#overrideglobalobjects)
-  - [Middleware](#middleware)
-  - [Static Middleware](#static-middleware)
-  - [Astro Middleware Example](#astro-middleware-example)
-    - [1. Set up the Adapter](#1-set-up-the-adapter)
-    - [2. Build your project](#2-build-your-project)
-    - [3. Import and set up your Appwrite hook](#3-import-and-set-up-your-appwrite-hook)
-  - [Requirements](#requirements)
-    - [Supported Appwrite Function API](#supported-appwrite-function-api)
-  - [License](#license)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Options](#options)
+    - [overrideGlobalObjects](#overrideglobalobjects)
+- [Middleware](#middleware)
+- [Static Middleware](#static-middleware)
+- [Astro Middleware Example](#astro-middleware-example)
+  - [1. Set up the Adapter](#1-set-up-the-adapter)
+  - [2. Build your project](#2-build-your-project)
+  - [3. Import and set up your Appwrite hook](#3-import-and-set-up-your-appwrite-hook)
+- [Requirements](#requirements)
+  - [Supported Appwrite Function API](#supported-appwrite-function-api)
+- [License](#license)
 
 </details>
 
