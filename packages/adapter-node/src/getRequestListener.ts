@@ -56,11 +56,7 @@ const responseViaCache = async (
         )
     }
 
-    return outgoing.send(
-        Readable.from(body as ReadableStream),
-        status,
-        headers,
-    )
+    return outgoing.send(Readable.from(body as ReadableStream), status, headers)
 
     // TODO: Future Stream
     // outgoing.start(status, header)

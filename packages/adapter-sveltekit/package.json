@@ -6,14 +6,14 @@
     "scripts": {
         "build": "tsup ./src/main.ts --format esm,cjs --outDir lib"
     },
-    "dependencies": {
-        "@gravlabs/appwrite-hono-adapter-node": "workspace:*"
-    },
     "devDependencies": {
         "typescript": "^5.5.3",
         "tsup": "^8.1.0"
     },
+    "dependencies": {
+        "hono": "^4.4.12"
+    },
     "peerDependencies": {
-        "hono": "^4.4.4"
+        "hono": ">=4.4.12"
     }
 }

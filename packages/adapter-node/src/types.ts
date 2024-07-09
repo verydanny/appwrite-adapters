@@ -78,6 +78,7 @@ export type Options = {
 
 export type CustomErrorHandler = (
     err: unknown,
+// biome-ignore lint/suspicious/noConfusingVoidType: need void
 ) => void | Response | Promise<void | Response>
 
 type JSONStub = Record<string | number | symbol, unknown>

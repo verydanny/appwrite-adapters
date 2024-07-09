@@ -66,6 +66,7 @@ const newRequestFromIncoming = (
     return new Request(url, init)
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: TODO: type this object
 const requestPrototype: Record<string | symbol, any> = {
     get method() {
         return this[incomingKey].method || 'GET'

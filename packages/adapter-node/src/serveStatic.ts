@@ -91,12 +91,16 @@ const getStats = (path: string) => {
     return stats
 }
 
-export const serveStatic = (options: ServeStaticOptions = { root: '' }): MiddlewareHandler => {
-    const root = isOpenRuntimes ? join(openRuntimeRoot, options?.root as string) : options?.root as string
+export const serveStatic = (
+    options: ServeStaticOptions = { root: '' },
+): MiddlewareHandler => {
+    const root = isOpenRuntimes
+        ? join(openRuntimeRoot, options?.root as string)
+        : (options?.root as string)
 
     return async (c, next) => {
         c.env.log(isOpenRuntimes)
-        
+
         // Do nothing if Response is already set
         if (c.finalized) {
             return next()
@@ -164,10 +168,7 @@ export const serveStatic = (options: ServeStaticOptions = { root: '' }): Middlew
             c.header('Content-Length', size.toString())
             // TODO: Stream later
             const buffer = createStreamBody(createReadStream(path))
-            return c.body(
-                buffer,
-                200,
-            )
+            return c.body(buffer, 200)
         }
 
         c.header('Accept-Ranges', 'bytes')

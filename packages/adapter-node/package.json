@@ -6,9 +6,13 @@
   "module": "lib/main.js",
   "scripts": {
     "build": "tsup",
-    "build:watch": "bun run build --watch",
-    "start": "nodemon --env-file=.env ./server/server.cjs",
-    "publish": "bun run tsc -b && bun run build"
+    "build:watch": "tsup --watch",
+    "postbuild": "publint",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --write ./src",
+    "format": "biome format --write ./src",
+    "format:fix": "biome format --write ./src",
+    "start": "nodemon --env-file=.env ./server/server.cjs"
   },
   "exports": {
     ".": {
@@ -48,9 +52,9 @@
   "devDependencies": {
     "@mobily/ts-belt": "^3.13.1",
     "@tsconfig/node21": "^21.0.3",
-    "@types/node": "^20.14.10",
-    "micro": "9.3.4",
+    "@biomejs/biome": "^1.8.3",
     "nodemon": "^3.1.4",
+    "publint": "^0.2.8",
     "tsup": "^8.1.0",
     "typescript": "^5.5.3"
   },

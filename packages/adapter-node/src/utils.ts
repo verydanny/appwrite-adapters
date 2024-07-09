@@ -8,7 +8,9 @@ import type { ReadableStream } from 'node:stream/web'
 import type { Context } from './types.ts'
 
 export const openRuntimeRoot = 'src/function'
-export const isOpenRuntimes = existsSync(resolve(process.cwd(), openRuntimeRoot))
+export const isOpenRuntimes = existsSync(
+    resolve(process.cwd(), openRuntimeRoot),
+)
 
 export async function streamToBuffer(
     readableStream: ReadableStream<Uint8Array>,

@@ -6,9 +6,7 @@
     "module": "lib/main.js",
     "scripts": {
       "build": "tsup",
-      "build:watch": "bun run build --watch",
-      "start": "nodemon --env-file=.env ./server/server.cjs",
-      "publish": "bun run tsc -b && bun run build"
+      "build:watch": "tsup --watch"
     },
     "exports": {
       ".": {
@@ -39,12 +37,13 @@
     ],
     "devDependencies": {
       "@mobily/ts-belt": "^3.13.1",
-      "@tsconfig/node21": "^21.0.3",
-      "@types/node": "^20.14.10",
-      "micro": "9.3.4",
-      "nodemon": "^3.1.4",
+      "@tsconfig/bun": "1.0.7",
+      "@types/bun": "latest",
       "tsup": "^8.1.0",
       "typescript": "^5.5.3"
+    },
+    "dependencies": {
+      "hono": "^4.4.12"
     },
     "peerDependencies": {
       "hono": "^4.4.12"

@@ -4,5 +4,6 @@
     },
     "[javascript]": {
         "editor.defaultFormatter": "biomejs.biome"
-    }
+    },
+    "github-actions.remote-name": "origin-default"
 }
