@@ -129,7 +129,7 @@ const responseViaResponseObject = async (
 
         if (internalBody.source instanceof Blob) {
             return outgoing.send(
-                Buffer.from(await internalBody.source.arrayBuffer()),
+                Readable.from(internalBody.source.stream()),
                 (res as Response).status,
                 resHeaderRecord,
             )
