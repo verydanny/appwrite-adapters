@@ -3,11 +3,12 @@
  * Request/Response https://github.com/honojs/node-server that speeds
  * up Node response by factor of 3
  */
-// import type { OutgoingHttpHeaders } from "node:http"
+
 import {
     newRequest,
     toRequestError,
     Request as LightweightRequest,
+    type RequestPrototype,
 } from './request.ts'
 import {
     cacheKey,
@@ -95,16 +96,16 @@ const responseViaResponseObject = async (
 
     if (cacheKey in res) {
         return responseViaCache(
-            res as LightweightResponse,
+            res,
             outgoing,
             options?.errorHandler as Context['error'],
         )
     }
 
-    const resHeaderRecord = buildOutgoingHttpHeaders((res as Response).headers)
+    const resHeaderRecord = buildOutgoingHttpHeaders(res.headers)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const internalBody = getInternalBody(res as Response)
+    const internalBody = getInternalBody(res)
     if (internalBody) {
         if (internalBody.length) {
             resHeaderRecord['content-length'] = internalBody.length
@@ -118,15 +119,15 @@ const responseViaResponseObject = async (
         ) {
             return outgoing.send(
                 Buffer.from(internalBody.source),
-                (res as Response).status,
+                res.status,
                 resHeaderRecord,
             )
         }
 
         if (internalBody.source instanceof Blob) {
             return outgoing.send(
-                Readable.from(internalBody.source.stream()),
-                (res as Response).status,
+                Buffer.from(await internalBody.source.arrayBuffer()),
+                res.status,
                 resHeaderRecord,
             )
         }
@@ -135,12 +136,12 @@ const responseViaResponseObject = async (
         // await writeFromReadableStream(internalBody.stream, outgoing)
         return outgoing.send(
             Readable.from(internalBody.stream),
-            (res as Response).status,
+            res.status,
             resHeaderRecord,
         )
     }
 
-    if ((res as Response).body) {
+    if (res.body) {
         /**
          * If content-encoding is set, we assume that the response should be not decoded.
          * Else if transfer-encoding is set, we assume that the response should be streamed.
@@ -168,29 +169,27 @@ const responseViaResponseObject = async (
         ) {
             // TODO: Future Stream
             // outgoing.start((res as Response).status, resHeaderRecord)
-            if ((res as Response).body) {
-                // TODO: Future Stream
-                // await writeFromReadableStream(
-                //     (res as Response).body as ReadableStream,
-                //     outgoing,
-                // )
-
-                return outgoing.send(
-                    Readable.from((res as Response).body as ReadableStream),
-                    (res as Response).status,
-                    resHeaderRecord,
-                )
-            }
-        } else {
-            const buffer = await (res as Response).arrayBuffer()
-            resHeaderRecord['content-length'] = buffer.byteLength
+            // TODO: Future Stream
+            // await writeFromReadableStream(
+            //     (res as Response).body as ReadableStream,
+            //     outgoing,
+            // )
 
             return outgoing.send(
-                Buffer.from(buffer),
-                (res as Response).status,
+                Readable.from(res.body),
+                res.status,
                 resHeaderRecord,
             )
         }
+
+        const buffer = await res.arrayBuffer()
+        resHeaderRecord['content-length'] = buffer.byteLength
+
+        return outgoing.send(
+            Buffer.from(buffer),
+            res.status,
+            resHeaderRecord,
+        )
     }
 
     return outgoing.empty()
@@ -223,7 +222,7 @@ export const getRequestListener = (
             | LightweightResponse
             | Promise<Response>
             | Promise<LightweightResponse> = undefined
-        let req: undefined | Request | LightweightRequest = undefined
+        let req: undefined | RequestPrototype = undefined
 
         try {
             req = newRequest(context.req, options.hostname)

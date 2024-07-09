@@ -1,0 +1,36 @@
+name: ci-adapter-node
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/adapter-node/**'
+  pull_request:
+    branches: ['*']
+    paths:
+      - 'packages/adapter-node/**'
+
+env:
+  PACKAGE_NAME: adapter-node
+
+jobs:
+  ci:
+    name: Build and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Branch
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build ${{ env.PACKAGE_NAME }} Package
+        run: bun --filter ./packages/${{ env.PACKAGE_NAME }} build
+
+      - name: Build ${{ env.PACKAGE_NAME }} Types
+        run: bun --filter ./packages/${{ env.PACKAGE_NAME }} build:types
+
+      - name: Lint ${{ env.PACKAGE_NAME }} Package
+        run: bun --filter ./packages/${{ env.PACKAGE_NAME }} lint

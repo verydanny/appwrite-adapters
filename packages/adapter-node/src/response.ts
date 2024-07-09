@@ -17,6 +17,9 @@ export const GlobalResponse = global.Response
 const responseCache = Symbol('responseCache')
 const getResponseCache = Symbol('getResponseCache')
 
+
+export interface Response extends GlobalResponseType {}
+// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: We're overriding existing classes, should be good
 export class Response {
     #body?: BodyInit | null
     #init?: ResponseInit;
@@ -42,7 +45,7 @@ export class Response {
         this.#body = body
 
         if (init instanceof Response) {
-            const cachedGlobalResponse = (init as Response)[responseCache]
+            const cachedGlobalResponse = init[responseCache]
 
             if (cachedGlobalResponse) {
                 this.#init = cachedGlobalResponse
@@ -62,7 +65,7 @@ export class Response {
             typeof body === 'string' ||
             typeof (body as ReadableStream)?.getReader !== 'undefined'
         ) {
-            let headers = ((init as ResponseInit)?.headers || {
+            let headers = (init?.headers || {
                 'content-type': 'text/plain; charset=UTF-8',
             }) as Record<string, string> | Headers | OutgoingHttpHeaders
 
@@ -70,7 +73,7 @@ export class Response {
                 headers = buildOutgoingHttpHeaders(headers)
             }
             this[cacheKey] = [
-                (init as ResponseInit)?.status || 200,
+                init?.status || 200,
                 body,
                 headers,
             ]
@@ -90,19 +93,19 @@ A.forEach(
         'trailers',
         'type',
         'url',
-    ],
+    ] as const,
     (k) => {
         Object.defineProperty(Response.prototype, k, {
-            get() {
-                return this[getResponseCache]()[k]
+            get(this: Response) {
+                return this[getResponseCache]()[k as keyof GlobalResponseType]
             },
         })
     },
 )
 
-A.forEach(['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'], (k) => {
+A.forEach(['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'] as const, (k) => {
     Object.defineProperty(Response.prototype, k, {
-        value: function () {
+        value: function (this: Response) {
             return this[getResponseCache]()[k]()
         },
     })
@@ -131,7 +134,6 @@ export function getInternalBody(
         response = response[getResponseCache]()
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // biome-ignore lint/suspicious/noExplicitAny: Hard to type a vague symbol
     const state = (response as any)[stateKey] as
         | { body?: InternalBody }

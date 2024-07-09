@@ -6,8 +6,9 @@
   "module": "lib/main.js",
   "scripts": {
     "build": "tsup",
+    "build:types": "tsc -b",
+    "postbuild:types": "publint",
     "build:watch": "tsup --watch",
-    "postbuild": "publint",
     "lint": "biome lint ./src",
     "lint:fix": "biome lint --write ./src",
     "format": "biome format --write ./src",
