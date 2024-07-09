@@ -10,7 +10,7 @@ on:
       - 'packages/adapter-node/**'
 
 env:
-  WORKING_DIR: './packages/adapter-node'
+  PACKAGE_NAME: adapter-node
 
 jobs:
   ci:
@@ -26,11 +26,11 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build Package
-        run: bun --filter ${{ env.WORKING_DIR }} build
+      - name: Build ${{ env.PACKAGE_NAME }} Package
+        run: bun --filter ./packages/${{ env.PACKAGE_NAME }} build
 
-      - name: Build Types
-        run: bun --filter ${{ env.WORKING_DIR }} build:types
+      - name: Build ${{ env.PACKAGE_NAME }} Types
+        run: bun --filter ./packages/${{ env.PACKAGE_NAME }} build:types
 
-      - name: Lint Package
-        run: bun --filter ${{ env.WORKING_DIR }} lint
+      - name: Lint ${{ env.PACKAGE_NAME }} Package
+        run: bun --filter ./packages/${{ env.PACKAGE_NAME }} lint
