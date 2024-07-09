@@ -14,7 +14,7 @@ env:
 
 jobs:
   ci:
-    name: Build and Lint ${{ env.PACKAGE_NAME }}
+    name: Build and Lint
     runs-on: ubuntu-latest
     steps:
       - name: Pull Branch
