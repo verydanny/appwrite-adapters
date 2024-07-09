@@ -3,7 +3,7 @@ import { A } from '@mobily/ts-belt'
 import { buildOutgoingHttpHeaders } from './utils.ts'
 
 import type { OutgoingHttpHeaders } from 'node:http'
-import type { Response as GlobalResponseType, BodyInit } from 'undici-types'
+import type { BodyInit, Response as GlobalResponseType } from 'undici-types'
 
 interface InternalBody {
     source: string | Uint8Array | FormData | Blob | null
@@ -16,7 +16,6 @@ export const GlobalResponse = global.Response
 
 const responseCache = Symbol('responseCache')
 const getResponseCache = Symbol('getResponseCache')
-
 
 export interface Response extends GlobalResponseType {}
 // biome-ignore lint/suspicious/noUnsafeDeclarationMerging: We're overriding existing classes, should be good
@@ -72,11 +71,7 @@ export class Response {
             if (headers instanceof Headers) {
                 headers = buildOutgoingHttpHeaders(headers)
             }
-            this[cacheKey] = [
-                init?.status || 200,
-                body,
-                headers,
-            ]
+            this[cacheKey] = [init?.status || 200, body, headers]
         }
     }
 }
@@ -103,13 +98,16 @@ A.forEach(
     },
 )
 
-A.forEach(['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'] as const, (k) => {
-    Object.defineProperty(Response.prototype, k, {
-        value: function (this: Response) {
-            return this[getResponseCache]()[k]()
-        },
-    })
-})
+A.forEach(
+    ['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'] as const,
+    (k) => {
+        Object.defineProperty(Response.prototype, k, {
+            value: function (this: Response) {
+                return this[getResponseCache]()[k]()
+            },
+        })
+    },
+)
 
 Object.setPrototypeOf(Response, GlobalResponse)
 Object.setPrototypeOf(Response.prototype, GlobalResponse.prototype)

@@ -1,24 +1,24 @@
 import type {
-    createServer,
-    IncomingMessage,
-    Server,
     ServerOptions as HttpServerOptions,
     ServerResponse as HttpServerResponse,
+    IncomingMessage,
     OutgoingHttpHeaders,
+    Server,
+    createServer,
 } from 'node:http'
 import type {
-    createSecureServer as createSecureHttp2Server,
-    createServer as createHttp2Server,
-    Http2ServerRequest,
-    Http2Server,
-    Http2ServerResponse,
     Http2SecureServer,
-    SecureServerOptions as SecureHttp2ServerOptions,
+    Http2Server,
     ServerOptions as Http2ServerOptions,
+    Http2ServerRequest,
+    Http2ServerResponse,
+    SecureServerOptions as SecureHttp2ServerOptions,
+    createServer as createHttp2Server,
+    createSecureServer as createSecureHttp2Server,
 } from 'node:http2'
 import type {
-    createServer as createHttpsServer,
     ServerOptions as HttpsServerOptions,
+    createServer as createHttpsServer,
 } from 'node:https'
 import type { Stream } from 'node:stream'
 
@@ -78,7 +78,7 @@ export type Options = {
 
 export type CustomErrorHandler = (
     err: unknown,
-// biome-ignore lint/suspicious/noConfusingVoidType: need void
+    // biome-ignore lint/suspicious/noConfusingVoidType: need void
 ) => void | Response | Promise<void | Response>
 
 type JSONStub = Record<string | number | symbol, unknown>

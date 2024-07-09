@@ -4,26 +4,26 @@
  * up Node response by factor of 3
  */
 
+import { Readable } from 'node:stream'
 import {
-    newRequest,
-    toRequestError,
     Request as LightweightRequest,
     type RequestPrototype,
+    newRequest,
+    toRequestError,
 } from './request.ts'
 import {
+    Response as LightweightResponse,
     cacheKey,
     getInternalBody,
-    Response as LightweightResponse,
 } from './response.ts'
-// @ts-ignore
-import { buildOutgoingHttpHeaders, nodeWebStreamToBuffer } from './utils.ts'
 import type {
     Context,
     CustomErrorHandler,
     FetchCallback,
     HttpBindings,
 } from './types.js'
-import { Readable } from 'node:stream'
+// @ts-ignore
+import { buildOutgoingHttpHeaders, nodeWebStreamToBuffer } from './utils.ts'
 
 const regBuffer = /^no$/i
 const regContentType = /^(application\/json\b|text\/(?!event-stream\b))/i
@@ -185,11 +185,7 @@ const responseViaResponseObject = async (
         const buffer = await res.arrayBuffer()
         resHeaderRecord['content-length'] = buffer.byteLength
 
-        return outgoing.send(
-            Buffer.from(buffer),
-            res.status,
-            resHeaderRecord,
-        )
+        return outgoing.send(Buffer.from(buffer), res.status, resHeaderRecord)
     }
 
     return outgoing.empty()

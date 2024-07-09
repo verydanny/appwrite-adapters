@@ -1,66 +1,59 @@
 {
-  "name": "@gravlabs/appwrite-hono-adapter-node",
-  "version": "0.4.0",
-  "type": "module",
-  "main": "lib/main.js",
-  "module": "lib/main.js",
-  "scripts": {
-    "build": "tsup",
-    "build:types": "tsc -b",
-    "postbuild:types": "publint",
-    "build:watch": "tsup --watch",
-    "lint": "biome lint ./src",
-    "lint:fix": "biome lint --write ./src",
-    "format": "biome format --write ./src",
-    "format:fix": "biome format --write ./src",
-    "start": "nodemon --env-file=.env ./server/server.cjs"
-  },
-  "exports": {
-    ".": {
-      "types": "./lib/main.d.ts",
-      "require": "./lib/main.cjs",
-      "import": "./lib/main.js"
+    "name": "@gravlabs/appwrite-hono-adapter-node",
+    "version": "0.4.0",
+    "type": "module",
+    "main": "lib/main.js",
+    "module": "lib/main.js",
+    "scripts": {
+        "build": "tsup",
+        "build:types": "tsc -b",
+        "postbuild:types": "publint",
+        "build:watch": "tsup --watch",
+        "lint": "biome lint ./src",
+        "lint:fix": "biome lint --write ./src",
+        "format": "biome format --write ./src",
+        "format:fix": "biome format --write ./src",
+        "start": "nodemon --env-file=.env ./server/server.cjs"
     },
-    "./serveStatic": {
-      "types": "./lib/serveStatic.d.ts",
-      "require": "./lib/serveStatic.cjs",
-      "import": "./lib/serveStatic.js"
+    "exports": {
+        ".": {
+            "types": "./lib/main.d.ts",
+            "require": "./lib/main.cjs",
+            "import": "./lib/main.js"
+        },
+        "./serveStatic": {
+            "types": "./lib/serveStatic.d.ts",
+            "require": "./lib/serveStatic.cjs",
+            "import": "./lib/serveStatic.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            ".": ["./lib/main.d.ts"],
+            "serve-static": ["./lib/serveStatic.d.ts"]
+        }
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org",
+        "access": "public"
+    },
+    "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-node",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/verydanny/appwrite-adapters.git"
+    },
+    "files": ["lib", "!lib/*.d.ts.map"],
+    "devDependencies": {
+        "@mobily/ts-belt": "^3.13.1",
+        "@tsconfig/node21": "^21.0.3",
+        "@types/node": "^20.14.10",
+        "@biomejs/biome": "^1.8.3",
+        "nodemon": "^3.1.4",
+        "publint": "^0.2.8",
+        "tsup": "^8.1.0",
+        "typescript": "^5.5.3"
+    },
+    "peerDependencies": {
+        "hono": "^4.4.12"
     }
-  },
-  "typesVersions": {
-    "*": {
-      ".": [
-        "./lib/main.d.ts"
-      ],
-      "serve-static": [
-        "./lib/serveStatic.d.ts"
-      ]
-    }
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public"
-  },
-  "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-node",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/verydanny/appwrite-adapters.git"
-  },
-  "files": [
-    "lib",
-    "!lib/*.d.ts.map"
-  ],
-  "devDependencies": {
-    "@mobily/ts-belt": "^3.13.1",
-    "@tsconfig/node21": "^21.0.3",
-    "@types/node": "^20.14.10",
-    "@biomejs/biome": "^1.8.3",
-    "nodemon": "^3.1.4",
-    "publint": "^0.2.8",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3"
-  },
-  "peerDependencies": {
-    "hono": "^4.4.12"
-  }
 }
