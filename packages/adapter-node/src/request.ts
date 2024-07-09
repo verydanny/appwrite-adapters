@@ -26,10 +26,14 @@ export const toRequestError = (e: unknown): RequestError => {
 
 export const GlobalRequest = global.Request
 export class Request extends GlobalRequest {
-    constructor(input: string | Request, options?: RequestInit) {
-        if (typeof input === 'object' && getRequestCache in input) {
+    constructor(input: string | RequestPrototype, options?: RequestInit) {
+        if (
+            typeof input === 'object' &&
+            getRequestCache in input &&
+            typeof input[getRequestCache]() !== 'undefined'
+        ) {
             // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
-            input = (input as typeof requestPrototype)[getRequestCache]()
+            input = input[getRequestCache]() as RequestPrototype
         }
         // Check if body is ReadableStream like. This makes it compatbile with ReadableStream polyfills.
         if (
@@ -57,17 +61,42 @@ const newRequestFromIncoming = (
     incoming: ReqContext,
     abortController: AbortController,
 ) => {
-    const init = {
+    const init: RequestInit = {
         method,
         headers: incoming.headers,
         signal: abortController.signal,
-    } as RequestInit
+    }
+
+    if (method === 'TRACE') {
+        init.method = 'GET'
+        const req = new Request(url, init)
+
+        Object.defineProperty(req, 'method', {
+            get() {
+                return 'TRACE'
+            }
+        })
+
+        return req
+    }
 
     return new Request(url, init)
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: TODO: type this object
-const requestPrototype: Record<string | symbol, any> = {
+export interface RequestPrototype extends GlobalRequestType {
+    [incomingKey]: ReqContext
+    [urlKey]: string
+    [abortControllerKey]: AbortController
+    [requestCache]: Request | GlobalRequestType
+
+    get method(): string
+    get url(): string
+
+    [getAbortController](): AbortController
+    [getRequestCache](): Request | GlobalRequestType
+}
+
+const requestPrototype = {
     get method() {
         return this[incomingKey].method || 'GET'
     },
@@ -78,21 +107,21 @@ const requestPrototype: Record<string | symbol, any> = {
 
     [getAbortController]() {
         this[getRequestCache]()
+
         return this[abortControllerKey]
     },
 
     [getRequestCache]() {
         this[abortControllerKey] ||= new AbortController()
-        // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+        // biome-ignore lint/suspicious/noAssignInExpressions: Saving memory
         return (this[requestCache] ||= newRequestFromIncoming(
-            // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-            this['method'],
-            this[urlKey],
+            this.method,
+            this.url,
             this[incomingKey],
             this[abortControllerKey],
         ))
     },
-}
+} as RequestPrototype
 
 A.forEach(
     [
@@ -132,8 +161,8 @@ Object.setPrototypeOf(requestPrototype, Request.prototype)
 export const newRequest = (
     incoming: ReqContext,
     defaultHostname?: string,
-): Request | GlobalRequestType => {
-    const req = Object.create(requestPrototype)
+) => {
+    const req: RequestPrototype = Object.create(requestPrototype)
     req[incomingKey] = incoming
 
     const host = incoming.host || defaultHostname
