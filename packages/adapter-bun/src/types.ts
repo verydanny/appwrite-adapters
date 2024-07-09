@@ -21,7 +21,7 @@ export interface ReqContext {
 
 export interface ResContext {
     send: (
-        body: Stream | Buffer | string,
+        body: string | ArrayBuffer | ReadableStream,
         statusCode: Response['status'],
         headers?: Record<string, string>,
     ) => void

@@ -1,7 +1,10 @@
-import type { Context } from '../src/types'
+import { serve } from '../lib/main.js'
+import { Hono } from 'hono'
 
-export default ({ req, res, log, error }: Context) => {
-    return res.send(JSON.stringify({ hello: 'world' }), 200, {
-        'content-type': 'application/json',
-    })
-}
+const app = new Hono()
+
+app.get('/', c => c.html(`
+        <h1>Testing Hono</h1>
+    `))
+
+export default serve(app)
