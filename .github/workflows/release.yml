@@ -26,7 +26,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
-        uses: verydanny/changeset-action
+        uses: verydanny/changeset-action@main
         with:
           publish: bun changeset publish
         env:
