@@ -94,10 +94,9 @@ const getStats = (path: string) => {
 export const serveStatic = (options: ServeStaticOptions = { root: '' }): MiddlewareHandler => {
     return async (c, next) => {
         c.env.log(isOpenRuntimes)
-        c.env.log(options?.root)
-        if (isOpenRuntimes && options?.root) {
-            options.root = join(openRuntimeRoot, options?.root)
-            c.env.log(options.root)
+        if (isOpenRuntimes) {
+            options.root = join(openRuntimeRoot, options?.root as string)
+            c.env.log(`new root: ${options.root}`)
         }
         
         // Do nothing if Response is already set
@@ -114,15 +113,11 @@ export const serveStatic = (options: ServeStaticOptions = { root: '' }): Middlew
             root: options?.root as string,
         })
 
-        c.env.log(path)
-
         if (path) {
             path = addCurrentDirPrefix(path)
         } else {
             return next()
         }
-
-        c.env.log(`path: ${path}`)
 
         let stats = getStats(path)
 
@@ -143,6 +138,8 @@ export const serveStatic = (options: ServeStaticOptions = { root: '' }): Middlew
 
             stats = getStats(path)
         }
+
+        c.env.log(`file path: ${path}`)
 
         if (!stats) {
             await options.onNotFound?.(path, c)

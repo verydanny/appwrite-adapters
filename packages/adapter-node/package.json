@@ -1,6 +1,6 @@
 {
   "name": "@gravlabs/appwrite-hono-adapter-node",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "type": "module",
   "main": "lib/main.js",
   "module": "lib/main.js",
