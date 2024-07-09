@@ -1,49 +1,47 @@
-Appwrite Hono Adapter
-=========
+# Appwrite Hono Adapter
 
 This adapter allows you to run your Hono application on Appwrite's `node-21.0` runtime. Please carefully read the **`Requirements`**.
 
-Table of Contents
-=========
+<details>
+<summary><strong>Table of Contents</strong></summary>
+
 - [Appwrite Hono Adapter](#appwrite-hono-adapter)
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Options](#options)
-    - [`overrideGlobalObjects`](#overrideglobalobjects)
-- [Middleware](#middleware)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Options](#options)
+      - [overrideGlobalObjects](#overrideglobalobjects)
+  - [Middleware](#middleware)
   - [Static Middleware](#static-middleware)
   - [Astro Middleware Example](#astro-middleware-example)
     - [1. Set up the Adapter](#1-set-up-the-adapter)
     - [2. Build your project](#2-build-your-project)
     - [3. Import and set up your Appwrite hook](#3-import-and-set-up-your-appwrite-hook)
-- [Requirements](#requirements)
+  - [Requirements](#requirements)
     - [Supported Appwrite Function API](#supported-appwrite-function-api)
-- [License](#license)
+  - [License](#license)
 
+</details>
 
-Installation
-=========
+## Installation
 
 You can install it from the npm registry:
 
-**npm**:
-```sh
-npm install hono @gravlabs/appwrite-hono-adapter-node
-```
+* **npm**:
+  ```sh
+  npm install hono @gravlabs/appwrite-hono-adapter-node
+  ```
 
-**yarn**:
-```sh
-yarn add hono @gravlabs/appwrite-hono-adapter-node
-```
+* **yarn**:
+  ```sh
+  yarn add hono @gravlabs/appwrite-hono-adapter-node
+  ```
 
-**bun**:
-```sh
-bun add hono @gravlabs/appwrite-hono-adapter-node
-```
+* **bun**:
+  ```sh
+  bun add hono @gravlabs/appwrite-hono-adapter-node
+  ```
 
-Usage
-=========
+## Usage
 
 Import **`serve`** from `@gravlabs/appwrite-hono-adapter-node` and write your Hono code like usual. It supports most Hono middleware as well:
 
@@ -69,16 +67,14 @@ app.get("/", (context) =>
 export default serve(app)
 ```
 
-Options
-=========
+## Options
 
-### `overrideGlobalObjects` 
-**`default: true`** 
+#### overrideGlobalObjects
+*default:* `true`
 
 Allows override of default `Response` and `Request` object. This is where the magic happens and allows this adapter to work faster than default `Response` and `Request` objects.
 
-Middleware
-=========
+## Middleware
 
 Middleware that works for Hono will work with this middleware.
 
@@ -97,6 +93,8 @@ Use the packaged `serveStatic` middleware to serve static files. It's best illus
 
 Your `serveStatic` middleware would look like so:
 ```js
+import { serveStatic } from "@gravlabs/appwrite-hono-adapter-node/serveStatic"
+
 app.use('/static/*', serveStatic({ root: './' }))
 ```
 
@@ -112,6 +110,8 @@ And with your folder structure looking like so:
 
 Your `serveStatic` middleware would look like so:
 ```js
+import { serveStatic } from "@gravlabs/appwrite-hono-adapter-node/serveStatic"
+
 app.use('/static/*', serveStatic({ root: './src' }))
 ```
 
@@ -154,8 +154,7 @@ app.use(ssrHandler)
 export default serve(app)
 ```
 
-Requirements
-=========
+## Requirements
 
 Pleae check out which context methods you can use and then [install the appropriate version.](https://appwrite.io/docs/products/functions/develop#context-object)
 
@@ -166,7 +165,6 @@ Pleae check out which context methods you can use and then [install the appropri
 | `>=1.0.0 \|\| < 2.0.0` | <li>`res.send()`</li> <li>`res.text()`</li> <li>`res.json()`</li> <li>`res.empty()`</li> <li>`res.redirect()`</li> <li>`res.binary()`</li> | <li>`res.start()`</li> <li>`res.writeText()`</li> <li>`res.writeJson()`</li> <li>`res.writeBinary()`</li> <li>`res.end()`</li>
 | `>=2.0.0` | <li>`res.send()`</li> <li>`res.text()`</li> <li>`res.json()`</li> <li>`res.empty()`</li> <li>`res.redirect()`</li> <li>`res.binary()`</li> <li>`res.start()`</li> <li>`res.writeText()`</li> <li>`res.writeJson()`</li> <li>`res.writeBinary()`</li> <li>`res.end()`</li> | 
 
-License
-=========
+## License
 
 MIT
