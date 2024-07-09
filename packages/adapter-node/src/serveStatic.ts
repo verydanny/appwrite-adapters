@@ -92,12 +92,10 @@ const getStats = (path: string) => {
 }
 
 export const serveStatic = (options: ServeStaticOptions = { root: '' }): MiddlewareHandler => {
+    const root = isOpenRuntimes ? join(openRuntimeRoot, options?.root as string) : options?.root as string
+
     return async (c, next) => {
         c.env.log(isOpenRuntimes)
-        if (isOpenRuntimes) {
-            options.root = join(openRuntimeRoot, options?.root as string)
-            c.env.log(`new root: ${options.root}`)
-        }
         
         // Do nothing if Response is already set
         if (c.finalized) {
@@ -110,7 +108,7 @@ export const serveStatic = (options: ServeStaticOptions = { root: '' }): Middlew
             filename: options.rewriteRequestPath
                 ? options.rewriteRequestPath(filename)
                 : filename,
-            root: options?.root as string,
+            root,
         })
 
         if (path) {
@@ -126,7 +124,7 @@ export const serveStatic = (options: ServeStaticOptions = { root: '' }): Middlew
                 filename: options.rewriteRequestPath
                     ? options.rewriteRequestPath(filename)
                     : filename,
-                root: options?.root as string,
+                root,
                 defaultDocument: options.index ?? 'index.html',
             })
 
