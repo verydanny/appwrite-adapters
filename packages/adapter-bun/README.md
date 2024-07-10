@@ -28,7 +28,7 @@ You can install it from the npm registry:
 
 * **bun**:
   ```sh
-  bun hono @gravlabs/appwrite-hono-adapter-bun
+  bun add hono @gravlabs/appwrite-hono-adapter-bun
   ```
 
 ## Usage
