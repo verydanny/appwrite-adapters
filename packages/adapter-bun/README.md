@@ -3,7 +3,7 @@
 This adapter allows you to run your Hono application on Appwrite's **`bun-1.0+`** runtime. **Caution:** this library is in active development and the API is subject to change.
 
 > [!NOTE]
-> Please carefully read the **[Requirements](#requirements)**. Certain versions of this library will work with select Appwrite `node-21.0+` runtimes.
+> Please carefully read the **[Requirements](#requirements)**. Certain versions of this library will work with select Appwrite `bun1.0+` runtimes.
 
 <details>
 <summary><strong>Table of Contents</strong></summary>
