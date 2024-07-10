@@ -1,3 +1,4 @@
+import CacheableRequest from 'cacheable-request'
 import type { Hono } from 'hono'
 import type { Context } from './types'
 
@@ -44,18 +45,26 @@ export function serve(app: Hono) {
                 return context.error('Invalid host header')
             }
 
-            const requestInit = newRequestFromIncoming(
+            // TODO: Cache Response and Request
+            const request = app.fetch(newRequestFromIncoming(
                 context.req.method,
                 url.href,
                 context.req,
-                new AbortController(),
-            )
-
-            const request = app.fetch(requestInit)
+                // TODO: see if way to cache abort controller
+                new AbortController()
+            ))
 
             if (request instanceof Promise) {
                 try {
                     const unwrappedRequest = await request
+
+                    if (unwrappedRequest.body instanceof ReadableStream) {
+                        return context.res.send(
+                            unwrappedRequest.body,
+                            unwrappedRequest.status,
+                            unwrappedRequest.headers.toJSON(),
+                        )
+                    }
 
                     return context.res.send(
                         await unwrappedRequest.arrayBuffer(),
