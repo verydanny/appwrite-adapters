@@ -1,5 +1,11 @@
 # @gravlabs/appwrite-hono-adapter-node
 
+## 0.4.2
+
+### Patch Changes
+
+- [`15972aa`](https://github.com/verydanny/appwrite-adapters/commit/15972aa77608ffa2fd1b0008b484401f57f83a82) Thanks [@verydanny](https://github.com/verydanny)! - Add a typings build step
+
 ## 0.4.1
 
 ### Patch Changes
