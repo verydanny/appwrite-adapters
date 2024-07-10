@@ -1,6 +1,6 @@
 {
   "name": "@gravlabs/appwrite-hono-adapter-bun",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "main": "lib/main.js",
   "module": "lib/main.js",
