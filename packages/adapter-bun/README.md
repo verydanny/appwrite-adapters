@@ -26,26 +26,16 @@ This adapter allows you to run your Hono application on Appwrite's **`bun-1.0+`*
 
 You can install it from the npm registry:
 
-* **npm**:
+* **bun**:
   ```sh
-  npm install hono @gravlabs/appwrite-hono-adapter-bun
-  ```
-
-* **yarn**:
-  ```sh
-  yarn add hono @gravlabs/appwrite-hono-adapter-bun
-  ```
-
-* **pnpm**:
-  ```sh
-  pnpm add hono @gravlabs/appwrite-hono-adapter-bun
+  bun hono @gravlabs/appwrite-hono-adapter-bun
   ```
 
 ## Usage
 
 Import **`serve`** from `@gravlabs/appwrite-hono-adapter-bun` and write your Hono code like usual. It supports most Hono middleware as well:
 
-```js
+```tsx
 import { Hono } from "hono"
 import { serve } from "@gravlabs/appwrite-hono-adapter-bun"
 import { serveStatic } from "@gravlabs/appwrite-hono-adapter-bun/serveStatic"
