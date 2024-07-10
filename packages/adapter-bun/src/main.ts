@@ -31,7 +31,6 @@ const newRequestFromIncoming = (
 
 export function serve(app: Hono) {
     return async function handle(context: Context) {
-        console.log(context.req)
         const host = context.req.host
 
         try {

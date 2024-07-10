@@ -1,3 +1,4 @@
+import type { BunFile } from 'bun'
 import type { Context } from 'hono'
 import type { Env, MiddlewareHandler } from 'hono/types'
 import {
@@ -5,6 +6,8 @@ import {
     getFilePathWithoutDefaultDocument,
 } from 'hono/utils/filepath'
 import { getMimeType } from 'hono/utils/mime'
+import { join } from 'node:path'
+import { isOpenRuntimes, openRuntimeRoot } from './utils'
 
 export type ServeStaticOptions<E extends Env = Env> = {
     root?: string
@@ -14,13 +17,14 @@ export type ServeStaticOptions<E extends Env = Env> = {
     onNotFound?: (path: string, c: Context<E>) => void | Promise<void>
 }
 
-export type Data = string | ArrayBuffer | ReadableStream;
+export type Data = string | ArrayBuffer | ReadableStream | BunFile
 
 const DEFAULT_DOCUMENT = 'index.html'
 const defaultPathResolve = (path: string) => path
 
 /**
- * This middleware is not directly used by the user. Create a wrapper specifying `getContent()` by the environment such as Deno or Bun.
+ * This middleware is not directly used by the user.
+ * Create a wrapper specifying `getContent()` by the environment such as Deno or Bun.
  */
 export const baseServeStatic = <E extends Env = Env>(
     options: ServeStaticOptions<E> & {
@@ -31,6 +35,10 @@ export const baseServeStatic = <E extends Env = Env>(
         pathResolve?: (path: string) => string
     },
 ): MiddlewareHandler => {
+    const normalizedRoot = isOpenRuntimes
+        ? join(openRuntimeRoot, options?.root as string)
+        : (options?.root as string)
+
     return async (c, next) => {
         // Do nothing if Response is already set
         if (c.finalized) {
@@ -38,11 +46,13 @@ export const baseServeStatic = <E extends Env = Env>(
             return
         }
 
+        console.log(normalizedRoot)
+
         let filename = options.path ?? decodeURI(c.req.path)
         filename = options.rewriteRequestPath
             ? options.rewriteRequestPath(filename)
             : filename
-        const root = options.root
+        const root = normalizedRoot
 
         let path = getFilePath({
             filename,
@@ -92,6 +102,11 @@ export const baseServeStatic = <E extends Env = Env>(
             if (mimeType) {
                 c.header('Content-Type', mimeType)
             }
+
+            if (content instanceof Blob) {
+                return c.body(content.stream())
+            }
+
             return c.body(content)
         }
 
@@ -106,6 +121,7 @@ export const serveStatic = <E extends Env = Env>(
 ): MiddlewareHandler => {
     return async function serveStatic(c, next) {
         const getContent = async (path: string) => {
+            // biome-ignore lint/style/noParameterAssign: Memory saver
             path = `./${path}`
             const file = Bun.file(path)
             return (await file.exists()) ? file : null
