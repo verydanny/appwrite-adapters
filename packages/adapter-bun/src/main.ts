@@ -1,7 +1,7 @@
-import type { Context, FetchFunction } from './types'
+import type { Context, FetchFunction, HTTPMethod, StatusCode } from './types'
 
 const newRequestFromIncoming = (
-    method: string,
+    method: HTTPMethod,
     url: string,
     incoming: Context['req'],
     abortController: AbortController,
@@ -46,13 +46,13 @@ export function serve({
                 return context.error('Invalid host header')
             }
 
-            // TODO: Cache Response and Request
+            /** @todo: Cache Response and Request */
             const request = fetch(
                 newRequestFromIncoming(
                     context.req.method,
                     url.href,
                     context.req,
-                    // TODO: see if way to cache abort controller
+                    /** @todo see if way to cache abort controller */
                     new AbortController(),
                 ),
                 context,
@@ -65,14 +65,14 @@ export function serve({
                     if (unwrappedRequest.body instanceof ReadableStream) {
                         return context.res.send(
                             unwrappedRequest.body,
-                            unwrappedRequest.status,
+                            unwrappedRequest.status as StatusCode,
                             unwrappedRequest.headers.toJSON(),
                         )
                     }
 
                     return context.res.send(
                         await unwrappedRequest.arrayBuffer(),
-                        unwrappedRequest.status,
+                        unwrappedRequest.status as StatusCode,
                         unwrappedRequest.headers.toJSON(),
                     )
                 } catch (error) {
@@ -83,14 +83,14 @@ export function serve({
             if (request.body instanceof ReadableStream) {
                 return context.res.send(
                     request.body,
-                    request.status,
+                    request.status as StatusCode,
                     request.headers.toJSON(),
                 )
             }
 
             return context.res.send(
                 await request.arrayBuffer(),
-                request.status,
+                request.status as StatusCode,
                 request.headers.toJSON(),
             )
         } catch (error) {

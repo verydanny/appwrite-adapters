@@ -7,9 +7,12 @@ import type { AppwriteBindings } from '@gravlabs/appwrite-hono-adapter-bun/types
 
 const app = new Hono<{ Bindings: AppwriteBindings }>()
 
-app.get('/static/*', serveStatic({
-    root: '/server'
-}))
+app.get(
+    '/static/*',
+    serveStatic({
+        root: '/server',
+    }),
+)
 
 app.get('/', (c) =>
     c.html(`
@@ -17,7 +20,8 @@ app.get('/', (c) =>
     `),
 )
 
-app.get('/testing', c => {
+app.get('/testing', (c) => {
+    console.log(c.env)
     return c.text('Hello world')
 })
 
