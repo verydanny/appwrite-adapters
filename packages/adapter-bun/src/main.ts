@@ -1,5 +1,4 @@
-import type { Hono } from 'hono'
-import type { Context } from './types'
+import type { Context, FetchFunction } from './types'
 
 const newRequestFromIncoming = (
     method: string,
@@ -29,7 +28,11 @@ const newRequestFromIncoming = (
     return new Request(url, init)
 }
 
-export function serve(app: Hono) {
+export function serve({
+    fetch,
+}: {
+    fetch: FetchFunction
+}) {
     return async function handle(context: Context) {
         const host = context.req.host
 
@@ -44,13 +47,16 @@ export function serve(app: Hono) {
             }
 
             // TODO: Cache Response and Request
-            const request = app.fetch(newRequestFromIncoming(
-                context.req.method,
-                url.href,
-                context.req,
-                // TODO: see if way to cache abort controller
-                new AbortController()
-            ))
+            const request = fetch(
+                newRequestFromIncoming(
+                    context.req.method,
+                    url.href,
+                    context.req,
+                    // TODO: see if way to cache abort controller
+                    new AbortController(),
+                ),
+                context,
+            )
 
             if (request instanceof Promise) {
                 try {
