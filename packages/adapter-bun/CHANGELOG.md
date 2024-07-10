@@ -1,5 +1,11 @@
 # @gravlabs/appwrite-hono-adapter-bun
 
+## 0.3.1
+
+### Patch Changes
+
+- [#12](https://github.com/verydanny/appwrite-adapters/pull/12) [`9c72cc7`](https://github.com/verydanny/appwrite-adapters/commit/9c72cc76b09abf6e2c07ae00db7f8863b53d3bb3) Thanks [@verydanny](https://github.com/verydanny)! - Remove accidental console.log
+
 ## 0.3.0
 
 ### Minor Changes
