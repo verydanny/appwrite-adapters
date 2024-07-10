@@ -1,20 +1,20 @@
-name: ci-adapter-node
+name: ci-adapter-bun
 on:
   push:
     branches: [main]
     paths:
-      - 'packages/adapter-node/**'
+      - 'packages/adapter-bun/**'
   pull_request:
     branches: ['*']
     paths:
-      - 'packages/adapter-node/**'
+      - 'packages/adapter-bun/**'
 
 env:
-  PACKAGE_NAME: adapter-node
+  PACKAGE_NAME: adapter-bun
 
 jobs:
   ci:
-    name: Build and Lint adapter-node
+    name: Build and Lint adapter-bun
     runs-on: ubuntu-latest
     steps:
       - name: Pull Branch

@@ -1,5 +1,6 @@
 import type { ReadStream, Stats } from 'node:fs'
 import { createReadStream, lstatSync } from 'node:fs'
+import { join } from 'node:path'
 import type { Context, MiddlewareHandler } from 'hono'
 import {
     getFilePath,
@@ -7,7 +8,6 @@ import {
 } from 'hono/utils/filepath'
 import { getMimeType } from 'hono/utils/mime'
 import { isOpenRuntimes, openRuntimeRoot } from './utils.ts'
-import { join } from 'node:path'
 
 export type ServeStaticOptions = {
     /**

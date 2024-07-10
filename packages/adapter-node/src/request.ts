@@ -1,7 +1,7 @@
 import { A } from '@mobily/ts-belt'
 
-import type { Request as GlobalRequestType } from 'undici-types'
 import type { ReadableStream } from 'node:stream/web'
+import type { Request as GlobalRequestType } from 'undici-types'
 import type { ReqContext } from './types.js'
 
 export class RequestError extends Error {
@@ -74,7 +74,7 @@ const newRequestFromIncoming = (
         Object.defineProperty(req, 'method', {
             get() {
                 return 'TRACE'
-            }
+            },
         })
 
         return req
@@ -158,10 +158,7 @@ A.forEach(['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'], (k) => {
 
 Object.setPrototypeOf(requestPrototype, Request.prototype)
 
-export const newRequest = (
-    incoming: ReqContext,
-    defaultHostname?: string,
-) => {
+export const newRequest = (incoming: ReqContext, defaultHostname?: string) => {
     const req: RequestPrototype = Object.create(requestPrototype)
     req[incomingKey] = incoming
 
