@@ -32,5 +32,8 @@
         "formatter": {
             "trailingCommas": "none"
         }
+    },
+    "files": {
+        "include": ["packages/**/*.ts"]
     }
 }

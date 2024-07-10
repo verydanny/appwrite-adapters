@@ -1,4 +1,3 @@
-import CacheableRequest from 'cacheable-request'
 import type { Hono } from 'hono'
 import type { Context } from './types'
 
