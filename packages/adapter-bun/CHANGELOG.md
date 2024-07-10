@@ -1,5 +1,11 @@
 # @gravlabs/appwrite-hono-adapter-bun
 
+## 0.3.0
+
+### Minor Changes
+
+- [#10](https://github.com/verydanny/appwrite-adapters/pull/10) [`b05205a`](https://github.com/verydanny/appwrite-adapters/commit/b05205ad5c709d862d909f25702ded16acf1a913) Thanks [@verydanny](https://github.com/verydanny)! - Added first class typing for headers, status codes, and methods
+
 ## 0.2.0
 
 ### Minor Changes
