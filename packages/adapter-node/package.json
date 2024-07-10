@@ -30,7 +30,7 @@
     "typesVersions": {
         "*": {
             ".": ["./lib/main.d.ts"],
-            "serve-static": ["./lib/serveStatic.d.ts"]
+            "serveStatic": ["./lib/serveStatic.d.ts"]
         }
     },
     "publishConfig": {

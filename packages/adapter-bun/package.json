@@ -2,8 +2,8 @@
   "name": "@gravlabs/appwrite-hono-adapter-bun",
   "version": "0.0.1",
   "type": "module",
-  "main": "src/main.ts",
-  "module": "src/main.ts",
+  "main": "lib/main.js",
+  "module": "lib/main.js",
   "scripts": {
     "build": "tsup",
     "build:types": "tsc -b",
@@ -17,13 +17,18 @@
   },
   "exports": {
     ".": {
-      "types": "./src/main.ts",
-      "import": "./src/main.ts"
+      "types": "./lib/main.d.ts",
+      "import": "./lib/main.js"
+    },
+    "./serveStatic": {
+      "types": "./lib/serveStatic.d.ts",
+      "import": "./lib/serveStatic.js"
     }
   },
   "typesVersions": {
     "*": {
-      ".": ["./src/main.d.ts"]
+      ".": ["./lib/main.d.ts"],
+      "serveStatic": ["./lib/serveStatic.d.ts"]
     }
   },
   "publishConfig": {
