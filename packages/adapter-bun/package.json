@@ -24,6 +24,9 @@
     "./serveStatic": {
       "types": "./lib/serveStatic.d.ts",
       "import": "./lib/serveStatic.js"
+    },
+    "./types": {
+      "types": "./lib/types.d.ts"
     }
   },
   "typesVersions": {
@@ -33,6 +36,9 @@
       ],
       "serveStatic": [
         "./lib/serveStatic.d.ts"
+      ],
+      "types": [
+        "./lib/types.d.ts"
       ]
     }
   },
