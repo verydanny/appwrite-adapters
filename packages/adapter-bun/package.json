@@ -1,6 +1,6 @@
 {
   "name": "@gravlabs/appwrite-hono-adapter-bun",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "main": "lib/main.js",
   "module": "lib/main.js",
@@ -27,8 +27,12 @@
   },
   "typesVersions": {
     "*": {
-      ".": ["./lib/main.d.ts"],
-      "serveStatic": ["./lib/serveStatic.d.ts"]
+      ".": [
+        "./lib/main.d.ts"
+      ],
+      "serveStatic": [
+        "./lib/serveStatic.d.ts"
+      ]
     }
   },
   "publishConfig": {
@@ -40,7 +44,10 @@
     "type": "git",
     "url": "https://github.com/verydanny/appwrite-adapters.git"
   },
-  "files": ["lib", "!lib/*.d.ts.map"],
+  "files": [
+    "lib",
+    "!lib/*.d.ts.map"
+  ],
   "devDependencies": {
     "@mobily/ts-belt": "^3.13.1",
     "@tsconfig/bun": "1.0.7",
