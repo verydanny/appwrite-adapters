@@ -21,7 +21,6 @@ app.get('/', (c) =>
 )
 
 app.get('/testing', (c) => {
-    console.log(c.env)
     return c.text('Hello world')
 })
 
