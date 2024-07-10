@@ -1,5 +1,11 @@
 # @gravlabs/appwrite-hono-adapter-bun
 
+## 0.2.0
+
+### Minor Changes
+
+- [#8](https://github.com/verydanny/appwrite-adapters/pull/8) [`90b8c3d`](https://github.com/verydanny/appwrite-adapters/commit/90b8c3d02d7837b4bd3548ca7237092d2bcf32ac) Thanks [@verydanny](https://github.com/verydanny)! - Added support for Appwrite context to the env and added typings for it
+
 ## 0.1.2
 
 ### Patch Changes
