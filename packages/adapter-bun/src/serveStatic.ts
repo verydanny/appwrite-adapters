@@ -46,8 +46,6 @@ export const baseServeStatic = <E extends Env = Env>(
             return
         }
 
-        console.log(normalizedRoot)
-
         let filename = options.path ?? decodeURI(c.req.path)
         filename = options.rewriteRequestPath
             ? options.rewriteRequestPath(filename)
