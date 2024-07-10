@@ -34,6 +34,6 @@
         }
     },
     "files": {
-        "include": ["packages/**/*.ts"]
+        "maxSize": 10000
     }
 }
