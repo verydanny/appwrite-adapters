@@ -210,7 +210,7 @@ export type FetchFunction = (
 
 export interface ReqContext {
     get bodyRaw(): string
-    get body(): string | JSONStub
+    get body(): RequestInit['body']
     headers: IncomingHeaders
     method: HTTPMethod
     url: string
