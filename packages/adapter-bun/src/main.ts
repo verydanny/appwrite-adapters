@@ -4,12 +4,16 @@ const newRequestFromIncoming = (
     method: HTTPMethod,
     url: string,
     incoming: Context['req'],
-    abortController: AbortController,
+    abortController: AbortController
 ) => {
     const init: RequestInit = {
         method,
         headers: incoming.headers,
         signal: abortController.signal,
+    }
+
+    if (!(method === 'GET' || method === 'HEAD')) {
+        init.body = incoming.body ?? null
     }
 
     if (method === 'TRACE') {

@@ -14,7 +14,7 @@
         "lint:fix": "biome lint --write ./src",
         "format": "biome format --write ./src",
         "format:fix": "biome format --write ./src",
-        "start": "nodemon --env-file=.env ./server/server.cjs"
+        "start": "OPEN_RUNTIMES_ENTRYPOINT=server/test.js nodemon ./server/server.cjs"
     },
     "exports": {
         ".": {
@@ -65,7 +65,8 @@
         "nodemon": "^3.1.4",
         "publint": "^0.2.8",
         "tsup": "^8.1.0",
-        "typescript": "^5.5.3"
+        "typescript": "^5.5.3",
+        "micro": "^9.4.1"
     },
     "peerDependencies": {
         "hono": "^4.4.12"
