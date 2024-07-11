@@ -1,5 +1,11 @@
 # @gravlabs/appwrite-hono-adapter-bun
 
+## 0.4.0
+
+### Minor Changes
+
+- [#16](https://github.com/verydanny/appwrite-adapters/pull/16) [`13ea425`](https://github.com/verydanny/appwrite-adapters/commit/13ea4253b967da88bb8811a207ac57b9b7b90ab7) Thanks [@verydanny](https://github.com/verydanny)! - Bun had no good req.post support, added better types
+
 ## 0.3.1
 
 ### Patch Changes
