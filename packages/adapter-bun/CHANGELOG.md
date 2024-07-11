@@ -1,5 +1,11 @@
 # @gravlabs/appwrite-hono-adapter-bun
 
+## 0.4.1
+
+### Patch Changes
+
+- [#18](https://github.com/verydanny/appwrite-adapters/pull/18) [`d53472c`](https://github.com/verydanny/appwrite-adapters/commit/d53472c76f33a5bf2b335b9bd04432f8626be639) Thanks [@verydanny](https://github.com/verydanny)! - Don't do streaming
+
 ## 0.4.0
 
 ### Minor Changes
