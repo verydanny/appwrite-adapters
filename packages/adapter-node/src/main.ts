@@ -1,8 +1,12 @@
 import { getRequestListener } from './getRequestListener.ts'
-import type { CustomErrorHandler } from './types.ts'
+import type { CustomErrorHandler, FetchFunction } from './types.ts'
 
 export function serve(
-    app: import('hono').Hono,
+    {
+        fetch,
+    }: {
+        fetch: FetchFunction
+    },
     options: {
         hostname?: string
         errorHandler?: CustomErrorHandler
@@ -11,5 +15,5 @@ export function serve(
         overrideGlobalObjects: true,
     },
 ) {
-    return getRequestListener(app.fetch, options)
+    return getRequestListener(fetch, options)
 }

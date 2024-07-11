@@ -1,9 +1,8 @@
 // Define lightweight pseudo Response class and replace global.Response with it.
-import { A } from '@mobily/ts-belt'
-import { buildOutgoingHttpHeaders } from './utils.ts'
+import { buildOutgoingHttpHeaders, forEach } from './utils.ts'
 
-import type { OutgoingHttpHeaders } from 'node:http'
 import type { BodyInit, Response as GlobalResponseType } from 'undici-types'
+import type { OutgoingHeaders, StatusCode } from './types.ts'
 
 interface InternalBody {
     source: string | Uint8Array | FormData | Blob | null
@@ -23,11 +22,7 @@ export class Response {
     #body?: BodyInit | null
     #init?: ResponseInit;
 
-    [cacheKey]?: [
-        number,
-        BodyInit,
-        Record<string, string> | OutgoingHttpHeaders,
-    ];
+    [cacheKey]?: [StatusCode, BodyInit, OutgoingHeaders];
     [responseCache]?: GlobalResponseType;
 
     [getResponseCache]() {
@@ -66,17 +61,22 @@ export class Response {
         ) {
             let headers = (init?.headers || {
                 'content-type': 'text/plain; charset=UTF-8',
-            }) as Record<string, string> | Headers | OutgoingHttpHeaders
+            }) as OutgoingHeaders
 
             if (headers instanceof Headers) {
                 headers = buildOutgoingHttpHeaders(headers)
             }
-            this[cacheKey] = [init?.status || 200, body, headers]
+
+            this[cacheKey] = [
+                (init?.status as StatusCode) || 200,
+                body,
+                headers,
+            ]
         }
     }
 }
 
-A.forEach(
+forEach(
     [
         'body',
         'bodyUsed',
@@ -98,7 +98,7 @@ A.forEach(
     },
 )
 
-A.forEach(
+forEach(
     ['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'] as const,
     (k) => {
         Object.defineProperty(Response.prototype, k, {

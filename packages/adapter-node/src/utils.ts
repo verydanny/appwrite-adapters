@@ -1,11 +1,9 @@
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-// import { finished } from "node:stream/promises"
 import { Readable } from 'node:stream'
 
-import type { OutgoingHttpHeaders } from 'node:http'
 import type { ReadableStream } from 'node:stream/web'
-import type { Context } from './types.ts'
+import type { OutgoingHeaders } from './types.ts'
 
 export const openRuntimeRoot = 'src/function'
 export const isOpenRuntimes = existsSync(
@@ -51,40 +49,41 @@ export async function nodeWebStreamToBuffer(
     })
 }
 
-export async function writeFromReadableStream(
-    stream: ReadableStream<Uint8Array>,
-    writable: Context['res'],
-) {
-    if (stream.locked) {
-        throw new TypeError('ReadableStream is locked.')
-    }
+/** @todo Implement in Version 2.0.0+ */
+// export async function writeFromReadableStream(
+//     stream: ReadableStream<Uint8Array>,
+//     writable: Context['res'],
+// ) {
+//     if (stream.locked) {
+//         throw new TypeError('ReadableStream is locked.')
+//     }
 
-    const reader = stream.getReader()
+//     const reader = stream.getReader()
 
-    try {
-        while (true) {
-            const { done, value } = await reader.read()
+//     try {
+//         while (true) {
+//             const { done, value } = await reader.read()
 
-            if (done) {
-                break
-            }
+//             if (done) {
+//                 break
+//             }
 
-            if (value) {
-                const buffer = Buffer.from(value)
+//             if (value) {
+//                 const buffer = Buffer.from(value)
 
-                writable.writeBinary(buffer)
-            }
-        }
-    } finally {
-        reader.releaseLock()
-        writable.end()
-    }
-}
+//                 writable.writeBinary(buffer)
+//             }
+//         }
+//     } finally {
+//         reader.releaseLock()
+//         writable.end()
+//     }
+// }
 
 export const buildOutgoingHttpHeaders = (
     headers: Response['headers'],
-): OutgoingHttpHeaders => {
-    const res: OutgoingHttpHeaders = {}
+): OutgoingHeaders => {
+    const res: OutgoingHeaders = {}
 
     const cookies = []
     for (const [k, v] of headers) {
@@ -100,4 +99,25 @@ export const buildOutgoingHttpHeaders = (
     res['content-type'] ??= 'text/plain; charset=UTF-8'
 
     return res
+}
+
+function forEachU<A>(a: A[], f: (arg: A) => void) {
+    for (let i = 0, i_finish = a.length; i < i_finish; ++i) {
+        f(a[i] as A)
+    }
+}
+
+export function forEach<const A>(xs: A[], fn: (_1: A) => void): void
+export function forEach<const A>(fn: (_1: A) => void): (xs: A[]) => void
+export function forEach<const A>() {
+    // biome-ignore lint/style/noArguments: performance optimization
+    if (arguments.length === 1) {
+        // biome-ignore lint/style/noArguments: performance optimization
+        const args = arguments
+        return function fn(data: A[]) {
+            return forEachU(data, args[0])
+        }
+    }
+    // biome-ignore lint/style/noArguments: performance optimization
+    return forEachU(arguments[0], arguments[1])
 }
