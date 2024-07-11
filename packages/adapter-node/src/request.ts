@@ -1,4 +1,4 @@
-import { A } from '@mobily/ts-belt'
+import { forEach } from './utils.ts'
 
 import type { ReadableStream } from 'node:stream/web'
 import type { Request as GlobalRequestType } from 'undici-types'
@@ -123,7 +123,7 @@ const requestPrototype = {
     },
 } as RequestPrototype
 
-A.forEach(
+forEach(
     [
         'body',
         'bodyUsed',
@@ -148,7 +148,7 @@ A.forEach(
     },
 )
 
-A.forEach(['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'], (k) => {
+forEach(['arrayBuffer', 'blob', 'clone', 'formData', 'json', 'text'], (k) => {
     Object.defineProperty(requestPrototype, k, {
         value: function () {
             return this[getRequestCache]()[k]()

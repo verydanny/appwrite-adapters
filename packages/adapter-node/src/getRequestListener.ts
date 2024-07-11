@@ -19,8 +19,8 @@ import {
 import type {
     Context,
     CustomErrorHandler,
-    FetchCallback,
-    HttpBindings,
+    FetchFunction,
+    StatusCode,
 } from './types.js'
 // @ts-ignore
 import { buildOutgoingHttpHeaders, nodeWebStreamToBuffer } from './utils.ts'
@@ -48,7 +48,7 @@ const responseViaCache = async (
     ]
 
     if (typeof body === 'string') {
-        headers['Content-Length'] = Buffer.byteLength(body)
+        headers['content-length'] = Buffer.byteLength(body)
 
         return outgoing.send(
             Buffer.from(body),
@@ -119,7 +119,7 @@ const responseViaResponseObject = async (
         ) {
             return outgoing.send(
                 Buffer.from(internalBody.source),
-                res.status,
+                res.status as StatusCode,
                 resHeaderRecord,
             )
         }
@@ -127,7 +127,7 @@ const responseViaResponseObject = async (
         if (internalBody.source instanceof Blob) {
             return outgoing.send(
                 Buffer.from(await internalBody.source.arrayBuffer()),
-                res.status,
+                res.status as StatusCode,
                 resHeaderRecord,
             )
         }
@@ -136,7 +136,7 @@ const responseViaResponseObject = async (
         // await writeFromReadableStream(internalBody.stream, outgoing)
         return outgoing.send(
             Readable.from(internalBody.stream),
-            res.status,
+            res.status as StatusCode,
             resHeaderRecord,
         )
     }
@@ -177,7 +177,7 @@ const responseViaResponseObject = async (
 
             return outgoing.send(
                 Readable.from(res.body),
-                res.status,
+                res.status as StatusCode,
                 resHeaderRecord,
             )
         }
@@ -185,14 +185,18 @@ const responseViaResponseObject = async (
         const buffer = await res.arrayBuffer()
         resHeaderRecord['content-length'] = buffer.byteLength
 
-        return outgoing.send(Buffer.from(buffer), res.status, resHeaderRecord)
+        return outgoing.send(
+            Buffer.from(buffer),
+            res.status as StatusCode,
+            resHeaderRecord,
+        )
     }
 
     return outgoing.empty()
 }
 
 export const getRequestListener = (
-    fetchCallback: FetchCallback,
+    fetchCallback: FetchFunction,
     options: {
         hostname?: string
         errorHandler?: CustomErrorHandler
@@ -224,12 +228,7 @@ export const getRequestListener = (
             req = newRequest(context.req, options.hostname)
 
             if (req) {
-                res = fetchCallback(req, {
-                    incoming: context.req,
-                    outgoing: context.res,
-                    error: context.error,
-                    log: context.log,
-                } as unknown as HttpBindings) as
+                res = fetchCallback(req, context) as
                     | Response
                     | LightweightResponse
                     | Promise<Response>
