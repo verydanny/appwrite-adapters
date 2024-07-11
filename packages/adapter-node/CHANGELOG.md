@@ -1,5 +1,13 @@
 # @gravlabs/appwrite-hono-adapter-node
 
+## 0.5.0
+
+### Minor Changes
+
+- [#14](https://github.com/verydanny/appwrite-adapters/pull/14) [`f091852`](https://github.com/verydanny/appwrite-adapters/commit/f0918525c12b3ed3f9c18acea14c54792a9d5dce) Thanks [@verydanny](https://github.com/verydanny)! - - Added own `forEach` function for faster performance
+  - Added AppwriteBindings for Hono
+  - Fixed unused typings
+
 ## 0.4.2
 
 ### Patch Changes
