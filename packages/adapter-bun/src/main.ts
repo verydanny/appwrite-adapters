@@ -66,13 +66,14 @@ export function serve({
                 try {
                     const unwrappedRequest = await request
 
-                    if (unwrappedRequest.body instanceof ReadableStream) {
-                        return context.res.send(
-                            unwrappedRequest.body,
-                            unwrappedRequest.status as StatusCode,
-                            unwrappedRequest.headers.toJSON(),
-                        )
-                    }
+                    /** @todo version 1.0.0+ */
+                    // if (unwrappedRequest.body instanceof ReadableStream) {
+                    //     return context.res.send(
+                    //         unwrappedRequest.body,
+                    //         unwrappedRequest.status as StatusCode,
+                    //         unwrappedRequest.headers.toJSON(),
+                    //     )
+                    // }
 
                     return context.res.send(
                         await unwrappedRequest.arrayBuffer(),
@@ -84,13 +85,14 @@ export function serve({
                 }
             }
 
-            if (request.body instanceof ReadableStream) {
-                return context.res.send(
-                    request.body,
-                    request.status as StatusCode,
-                    request.headers.toJSON(),
-                )
-            }
+            /** @todo version 1.0.0+ */
+            // if (request.body instanceof ReadableStream) {
+            //     return context.res.send(
+            //         request.body,
+            //         request.status as StatusCode,
+            //         request.headers.toJSON(),
+            //     )
+            // }
 
             return context.res.send(
                 await request.arrayBuffer(),
