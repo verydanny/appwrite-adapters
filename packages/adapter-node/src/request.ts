@@ -3,7 +3,6 @@ import { forEach } from './utils.ts'
 import type { ReadableStream } from 'node:stream/web'
 import type { Request as GlobalRequestType } from 'undici-types'
 import type { ReqContext } from './types.js'
-import { Readable } from 'node:stream'
 
 export class RequestError extends Error {
     static override name = 'RequestError'
