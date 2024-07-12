@@ -3,6 +3,7 @@ import { forEach } from './utils.ts'
 import type { ReadableStream } from 'node:stream/web'
 import type { Request as GlobalRequestType } from 'undici-types'
 import type { ReqContext } from './types.js'
+import { Readable } from 'node:stream'
 
 export class RequestError extends Error {
     static override name = 'RequestError'
@@ -78,6 +79,11 @@ const newRequestFromIncoming = (
         })
 
         return req
+    }
+
+    if (!(method === 'GET' || method === 'HEAD') && incoming.body) {
+        /** @todo This will using incoming.body in future versions because it supports binary */
+        init.body = incoming.bodyRaw
     }
 
     return new Request(url, init)

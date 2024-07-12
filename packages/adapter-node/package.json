@@ -14,7 +14,8 @@
         "lint:fix": "biome lint --write ./src",
         "format": "biome format --write ./src",
         "format:fix": "biome format --write ./src",
-        "start": "OPEN_RUNTIMES_ENTRYPOINT=server/test.js nodemon ./server/server.cjs"
+        "start": "OPEN_RUNTIMES_ENTRYPOINT=server/test.js nodemon ./server/originalServer.cjs",
+        "start:faster": "OPEN_RUNTIMES_ENTRYPOINT=server/test.js nodemon ./server/fasterServer.cjs"
     },
     "exports": {
         ".": {
