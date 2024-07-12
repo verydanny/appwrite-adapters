@@ -18,6 +18,7 @@ This adapter allows you to run your Hono application on Appwrite's `node-21.0` r
   - [1. Set up the Adapter](#1-set-up-the-adapter)
   - [2. Build your project](#2-build-your-project)
   - [3. Import and set up your Appwrite hook](#3-import-and-set-up-your-appwrite-hook)
+- [Typings](#typings)
 - [Requirements](#requirements)
   - [Supported Appwrite Function API](#supported-appwrite-function-api)
 - [License](#license)
@@ -156,6 +157,16 @@ app.use(ssrHandler)
 export default serve(app)
 ```
 
+## Typings
+
+You can use the `log` and `error` functions from the runtime, as well as have access to the original `req` and `res` by accessing the `context.env` in Hono. You can access the types from
+
+```typescript
+import type { AppwriteBindings } from '@gravlabs/appwrite-hono-adapter-node/types'
+```
+
+<img src="https://github.com/verydanny/appwrite-adapters/raw/main/packages/adapter-node/static/screenshot.png">
+
 ## Requirements
 
 Pleae check out which context methods you can use and then [install the appropriate version.](https://appwrite.io/docs/products/functions/develop#context-object)
@@ -163,7 +174,7 @@ Pleae check out which context methods you can use and then [install the appropri
 ### Supported Appwrite Function API
 | Version | Supports | Doesn't Support | 
 | --- | --- | --- |
-| `< 1.0.0` | <li>`res.send()`</li> <li>`res.text()`</li> <li>`res.json()`</li> <li>`res.empty()`</li> <li>`res.redirect()`</li> | <li>`res.binary()`</li> <li>`res.start()`</li> <li>`res.writeText()`</li> <li>`res.writeJson()`</li> <li>`res.writeBinary()`</li> <li>`res.end()`</li>
+| `< 1.0.0` | <li>`res.send()`</li> <li>`res.json()`</li> <li>`res.empty()`</li> <li>`res.redirect()`</li> | <li>`res.binary()`</li> <li>`res.start()`</li> <li>`res.writeText()`</li> <li>`res.writeJson()`</li> <li>`res.writeBinary()`</li> <li>`res.end()`</li>
 | `>=1.0.0 \|\| < 2.0.0` | <li>`res.send()`</li> <li>`res.text()`</li> <li>`res.json()`</li> <li>`res.empty()`</li> <li>`res.redirect()`</li> <li>`res.binary()`</li> | <li>`res.start()`</li> <li>`res.writeText()`</li> <li>`res.writeJson()`</li> <li>`res.writeBinary()`</li> <li>`res.end()`</li>
 | `>=2.0.0` | <li>`res.send()`</li> <li>`res.text()`</li> <li>`res.json()`</li> <li>`res.empty()`</li> <li>`res.redirect()`</li> <li>`res.binary()`</li> <li>`res.start()`</li> <li>`res.writeText()`</li> <li>`res.writeJson()`</li> <li>`res.writeBinary()`</li> <li>`res.end()`</li> | 
 

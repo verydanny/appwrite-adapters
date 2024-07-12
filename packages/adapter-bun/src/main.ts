@@ -13,7 +13,8 @@ const newRequestFromIncoming = (
     }
 
     if (!(method === 'GET' || method === 'HEAD')) {
-        init.body = incoming.body ?? null
+        /** @todo This will using incoming.body in future versions because it supports binary */
+        init.body = incoming.bodyRaw ?? null
     }
 
     if (method === 'TRACE') {
@@ -65,39 +66,42 @@ export function serve({
             if (request instanceof Promise) {
                 try {
                     const unwrappedRequest = await request
+                    const headers = unwrappedRequest.headers.toJSON()
 
                     /** @todo version 1.0.0+ */
                     // if (unwrappedRequest.body instanceof ReadableStream) {
                     //     return context.res.send(
                     //         unwrappedRequest.body,
                     //         unwrappedRequest.status as StatusCode,
-                    //         unwrappedRequest.headers.toJSON(),
+                    //         headers,
                     //     )
                     // }
 
                     return context.res.send(
                         await unwrappedRequest.arrayBuffer(),
                         unwrappedRequest.status as StatusCode,
-                        unwrappedRequest.headers.toJSON(),
+                        headers,
                     )
                 } catch (error) {
                     return context.error(error)
                 }
             }
 
+            const headers = request.headers.toJSON()
+
             /** @todo version 1.0.0+ */
             // if (request.body instanceof ReadableStream) {
             //     return context.res.send(
             //         request.body,
             //         request.status as StatusCode,
-            //         request.headers.toJSON(),
+            //         headers,
             //     )
             // }
 
             return context.res.send(
                 await request.arrayBuffer(),
                 request.status as StatusCode,
-                request.headers.toJSON(),
+                headers,
             )
         } catch (error) {
             context.error(error)

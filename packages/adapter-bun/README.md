@@ -146,7 +146,7 @@ You can use the `log` and `error` functions from the runtime, as well as have ac
 import type { AppwriteBindings } from '@gravlabs/appwrite-hono-adapter-bun/types'
 ```
 
-[<img src="static/screenshot.png">]
+<img src="https://github.com/verydanny/appwrite-adapters/raw/main/packages/adapter-bun/static/screenshot.png">
 
 ## Requirements
 
