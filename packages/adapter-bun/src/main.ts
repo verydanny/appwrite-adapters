@@ -4,7 +4,7 @@ const newRequestFromIncoming = (
     method: HTTPMethod,
     url: string,
     incoming: Context['req'],
-    abortController: AbortController
+    abortController: AbortController,
 ) => {
     const init: RequestInit = {
         method,

@@ -1,7 +1,8 @@
 const USER_CODE_PATH = __dirname
 
+// @biome-disable
 const action = async (request) => {
-    const timeout = request.headers.get(`x-open-runtimes-timeout`) ?? ''
+    const timeout = request.headers.get('x-open-runtimes-timeout') ?? ''
     let safeTimeout: number | null = null
     if (timeout) {
         if (isNaN(+timeout) || timeout === '0') {
@@ -17,9 +18,9 @@ const action = async (request) => {
     }
 
     if (
-        Bun.env['OPEN_RUNTIMES_SECRET'] &&
+        Bun.env.OPEN_RUNTIMES_SECRET &&
         (request.headers.get('x-open-runtimes-secret') ?? '') !==
-            Bun.env['OPEN_RUNTIMES_SECRET']
+            Bun.env.OPEN_RUNTIMES_SECRET
     ) {
         return new Response(
             'Unauthorized. Provide correct "x-open-runtimes-secret" header.',

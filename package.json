@@ -9,11 +9,11 @@
         "package": "bun run types && bun run build"
     },
     "devDependencies": {
-        "@biomejs/biome": "^1.8.3",
+        "@biomejs/biome": "^1.9.4",
         "@types/bun": "latest",
         "@tsconfig/strictest": "^2.0.5",
         "@changesets/changelog-github": "^0.5.0",
-        "@changesets/cli": "^2.27.7"
+        "@changesets/cli": "^2.27.12"
     },
     "peerDependencies": {
         "typescript": "^5.5.3"

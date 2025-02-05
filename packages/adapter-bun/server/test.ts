@@ -1,6 +1,6 @@
-import { Hono } from 'hono'
 import { serve } from '@gravlabs/appwrite-hono-adapter-bun'
 import { serveStatic } from '@gravlabs/appwrite-hono-adapter-bun/serveStatic'
+import { Hono } from 'hono'
 
 // Bindings for Appwrite
 import type { AppwriteBindings } from '@gravlabs/appwrite-hono-adapter-bun/types'
