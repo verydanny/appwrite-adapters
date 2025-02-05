@@ -1,5 +1,5 @@
-import type { Hono } from 'hono'
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'node:http'
+import type { Hono } from 'hono'
 
 export type NormalizeString<
     Key extends string,

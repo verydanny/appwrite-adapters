@@ -47,7 +47,7 @@ function readStreamToBufferSafely(
         const chunks: Uint8Array[] = []
         let totalSize = 0
 
-        readStream.on('data', (chunk: Buffer) => {
+        readStream.on('data', (chunk) => {
             totalSize += chunk.length
 
             if (totalSize > maxSize) {
@@ -58,7 +58,7 @@ function readStreamToBufferSafely(
                     ),
                 )
             } else {
-                chunks.push(new Uint8Array(chunk))
+                chunks.push(new Uint8Array(chunk as Buffer<ArrayBufferLike>))
             }
         })
 
@@ -75,7 +75,7 @@ function readStreamToBufferSafely(
 
         readStream.on('error', reject)
 
-        readStream.on('close', resolve)
+        readStream.on('close', () => resolve)
     })
 }
 

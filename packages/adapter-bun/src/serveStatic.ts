@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import type { BunFile } from 'bun'
 import type { Context } from 'hono'
 import type { Env, MiddlewareHandler } from 'hono/types'
@@ -6,7 +7,6 @@ import {
     getFilePathWithoutDefaultDocument,
 } from 'hono/utils/filepath'
 import { getMimeType } from 'hono/utils/mime'
-import { join } from 'node:path'
 import { isOpenRuntimes, openRuntimeRoot } from './utils'
 
 export type ServeStaticOptions<E extends Env = Env> = {

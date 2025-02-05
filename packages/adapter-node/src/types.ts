@@ -1,9 +1,9 @@
 import type {
     ServerOptions as HttpServerOptions,
     ServerResponse as HttpServerResponse,
+    IncomingHttpHeaders,
     IncomingMessage,
     OutgoingHttpHeaders,
-    IncomingHttpHeaders,
     Server,
     createServer,
 } from 'node:http'

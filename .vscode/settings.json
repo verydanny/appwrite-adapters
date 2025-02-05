@@ -5,5 +5,10 @@
     "[javascript]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
-    "github-actions.remote-name": "origin-default"
+    "[json]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    }
 }
