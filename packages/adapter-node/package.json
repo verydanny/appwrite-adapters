@@ -1,6 +1,6 @@
 {
     "name": "@gravlabs/appwrite-hono-adapter-node",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "type": "module",
     "main": "lib/main.js",
     "module": "lib/main.js",
@@ -34,9 +34,15 @@
     },
     "typesVersions": {
         "*": {
-            ".": ["./lib/main.d.ts"],
-            "serveStatic": ["./lib/serveStatic.d.ts"],
-            "types": ["./lib/types.d.ts"]
+            ".": [
+                "./lib/main.d.ts"
+            ],
+            "serveStatic": [
+                "./lib/serveStatic.d.ts"
+            ],
+            "types": [
+                "./lib/types.d.ts"
+            ]
         }
     },
     "publishConfig": {
@@ -48,7 +54,10 @@
         "type": "git",
         "url": "https://github.com/verydanny/appwrite-adapters.git"
     },
-    "files": ["lib", "!lib/*.d.ts.map"],
+    "files": [
+        "lib",
+        "!lib/*.d.ts.map"
+    ],
     "devDependencies": {
         "@mobily/ts-belt": "^3.13.1",
         "@tsconfig/node21": "^21.0.3",

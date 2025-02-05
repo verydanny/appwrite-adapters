@@ -1,5 +1,17 @@
 # @gravlabs/appwrite-hono-adapter-bun
 
+## 0.6.0
+
+### Minor Changes
+
+- [#24](https://github.com/verydanny/appwrite-adapters/pull/24) [`690dff5`](https://github.com/verydanny/appwrite-adapters/commit/690dff56378ee86f2b6110474418d68a87cae93e) Thanks [@verydanny](https://github.com/verydanny)! - @gravlabs/appwrite-hono-adapter-node
+
+  - Bump types versions, update biome, fix lint
+
+  @gravlabs/appwrite-hono-adapter-bun
+
+  - Bump types versions, update biome, fix lint
+
 ## 0.5.0
 
 ### Minor Changes
