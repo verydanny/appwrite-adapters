@@ -1,6 +1,6 @@
 {
     "name": "@gravlabs/appwrite-elysia-adapter-node",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "type": "module",
     "main": "lib/main.js",
     "module": "lib/main.js",

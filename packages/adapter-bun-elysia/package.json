@@ -1,6 +1,6 @@
 {
     "name": "@gravlabs/appwrite-elysia-adapter-bun",
-    "version": "0.0.6",
+    "version": "0.1.0",
     "type": "module",
     "main": "lib/main.js",
     "module": "lib/main.js",

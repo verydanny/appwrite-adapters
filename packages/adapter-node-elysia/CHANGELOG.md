@@ -1,5 +1,26 @@
 # @gravlabs/appwrite-hono-adapter-node
 
+## 0.1.0
+
+### Minor Changes
+
+- [#26](https://github.com/verydanny/appwrite-adapters/pull/26) [`e3aa385`](https://github.com/verydanny/appwrite-adapters/commit/e3aa38551d2e27d6baaf23f8ce9f01f7b6269b4c) Thanks [@verydanny](https://github.com/verydanny)! - feat(dx): Updated and fixed linting
+
+  - Fixed linting
+  - changed builds
+  - fix types
+
+### Patch Changes
+
+- [#26](https://github.com/verydanny/appwrite-adapters/pull/26) [`776f7ca`](https://github.com/verydanny/appwrite-adapters/commit/776f7cae71186284c6af834deeb660936cf663a9) Thanks [@verydanny](https://github.com/verydanny)! - feat: Add Elysia adapters for Bun and Node.js
+
+  This introduces two new adapters for integrating Appwrite with ElysiaJS, one for the Bun runtime and another for Node.js environments.
+
+  - **`@gravlabs/appwrite-elysia-adapter-bun`**: Leverages Bun's native APIs for optimal performance.
+  - **`@gravlabs/appwrite-elysia-adapter-node`**: Provides compatibility for Node.js servers.
+
+  Both adapters offer a streamlined way to handle Appwrite server-side SDK integration within ElysiaJS applications, including request and response handling, and helper functions for common Appwrite tasks.
+
 ## 0.8.0
 
 ### Minor Changes
