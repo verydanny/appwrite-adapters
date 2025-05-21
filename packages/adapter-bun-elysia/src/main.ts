@@ -1,3 +1,4 @@
+import type { Elysia } from 'elysia'
 import type { Context, FetchFunction, HTTPMethod, StatusCode } from './types'
 
 const newRequestFromIncoming = (
@@ -13,8 +14,11 @@ const newRequestFromIncoming = (
     }
 
     if (!(method === 'GET' || method === 'HEAD')) {
-        /** @todo This will using incoming.body in future versions because it supports binary */
-        init.body = incoming.bodyRaw ?? null
+        if (incoming.bodyBinary instanceof ArrayBuffer) {
+            init.body = incoming.bodyBinary
+        } else {
+            init.body = incoming.bodyRaw ?? null
+        }
     }
 
     if (method === 'TRACE') {
@@ -33,13 +37,10 @@ const newRequestFromIncoming = (
     return new Request(url, init)
 }
 
-export function serve({
-    fetch,
-}: {
-    fetch: FetchFunction
-}) {
+export function serve(app: Elysia) {
     return async function handle(context: Context) {
         const host = context.req.host
+        const fetch = app.fetch
 
         try {
             const url = new URL(context.req.url)
@@ -60,7 +61,6 @@ export function serve({
                     /** @todo see if way to cache abort controller */
                     new AbortController(),
                 ),
-                context,
             )
 
             if (request instanceof Promise) {
@@ -68,16 +68,15 @@ export function serve({
                     const unwrappedRequest = await request
                     const headers = unwrappedRequest.headers.toJSON()
 
-                    /** @todo version 1.0.0+ */
-                    // if (unwrappedRequest.body instanceof ReadableStream) {
-                    //     return context.res.send(
-                    //         unwrappedRequest.body,
-                    //         unwrappedRequest.status as StatusCode,
-                    //         headers,
-                    //     )
-                    // }
+                    if (unwrappedRequest.body instanceof ReadableStream) {
+                        return context.res.send(
+                            unwrappedRequest.body,
+                            unwrappedRequest.status as StatusCode,
+                            headers,
+                        )
+                    }
 
-                    return context.res.send(
+                    return context.res.binary(
                         await unwrappedRequest.arrayBuffer(),
                         unwrappedRequest.status as StatusCode,
                         headers,
@@ -89,16 +88,15 @@ export function serve({
 
             const headers = request.headers.toJSON()
 
-            /** @todo version 1.0.0+ */
-            // if (request.body instanceof ReadableStream) {
-            //     return context.res.send(
-            //         request.body,
-            //         request.status as StatusCode,
-            //         headers,
-            //     )
-            // }
+            if (request.body instanceof ReadableStream) {
+                return context.res.send(
+                    request.body,
+                    request.status as StatusCode,
+                    headers,
+                )
+            }
 
-            return context.res.send(
+            return context.res.binary(
                 await request.arrayBuffer(),
                 request.status as StatusCode,
                 headers,

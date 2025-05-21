@@ -119,7 +119,6 @@ export const serveStatic = <E extends Env = Env>(
 ): MiddlewareHandler => {
     return async function serveStatic(c, next) {
         const getContent = async (path: string) => {
-            // biome-ignore lint/style/noParameterAssign: Memory saver
             path = `./${path}`
             const file = Bun.file(path)
             return (await file.exists()) ? file : null

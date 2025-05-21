@@ -5,8 +5,10 @@
     },
     "references": [
         { "path": "./packages/adapter-astro" },
-        { "path": "./packages/adapter-bun" },
-        { "path": "./packages/adapter-node" },
-        { "path": "./packages/adapter-sveltekit" }
+        { "path": "./packages/adapter-bun-hono" },
+        { "path": "./packages/adapter-node-hono" },
+        { "path": "./packages/adapter-sveltekit" },
+        { "path": "./packages/adapter-bun-elysia" },
+        { "path": "./packages/adapter-node-elysia" }
     ]
 }

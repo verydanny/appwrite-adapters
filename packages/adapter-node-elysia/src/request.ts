@@ -1,12 +1,13 @@
-import { forEach } from './utils.ts'
-
 import type { ReadableStream } from 'node:stream/web'
-import type { Request as GlobalRequestType } from 'undici-types'
-import type { ReqContext } from './types.js'
+import type {
+    Request as UndiciRequest,
+    RequestInit as UndiciRequestInit,
+} from 'undici-types'
+import type { ReqContext } from './types.ts'
+import { forEach } from './utils.ts'
 
 export class RequestError extends Error {
     static override name = 'RequestError'
-    // biome-ignore lint/complexity/noUselessConstructor: <explanation>
     constructor(
         message: string,
         options?: {
@@ -24,15 +25,19 @@ export const toRequestError = (e: unknown): RequestError => {
     return new RequestError((e as Error).message, { cause: e })
 }
 
-export const GlobalRequest = global.Request
+interface NodeRequestConstructor {
+    new (input: string | UndiciRequest, init?: UndiciRequestInit): UndiciRequest
+    prototype: UndiciRequest
+}
+
+export const GlobalRequest = global.Request as NodeRequestConstructor
 export class Request extends GlobalRequest {
-    constructor(input: string | RequestPrototype, options?: RequestInit) {
+    constructor(input: string | RequestPrototype, options?: UndiciRequestInit) {
         if (
             typeof input === 'object' &&
             getRequestCache in input &&
             typeof input[getRequestCache]() !== 'undefined'
         ) {
-            // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
             input = input[getRequestCache]() as RequestPrototype
         }
         // Check if body is ReadableStream like. This makes it compatbile with ReadableStream polyfills.
@@ -41,15 +46,16 @@ export class Request extends GlobalRequest {
         ) {
             // node 18 fetch needs half duplex mode when request body is stream
             // if already set, do nothing since a Request object was passed to the options or explicitly set by the user.
-            ;(options as RequestInit & { duplex?: 'half' | 'full' }).duplex ??=
-                'half'
+            ;(
+                options as UndiciRequestInit & { duplex?: 'half' | 'full' }
+            ).duplex ??= 'half'
         }
         super(input, options)
     }
 }
 
 export const getAbortController = Symbol('getAbortController')
-const getRequestCache = Symbol('getRequestCache')
+export const getRequestCache = Symbol('getRequestCache')
 const requestCache = Symbol('requestCache')
 const incomingKey = Symbol('incomingKey')
 const urlKey = Symbol('urlKey')
@@ -61,10 +67,11 @@ const newRequestFromIncoming = (
     incoming: ReqContext,
     abortController: AbortController,
 ) => {
-    const init: RequestInit = {
+    const init: UndiciRequestInit = {
         method,
         headers: incoming.headers,
         signal: abortController.signal,
+        body: null,
     }
 
     if (method === 'TRACE') {
@@ -81,24 +88,27 @@ const newRequestFromIncoming = (
     }
 
     if (!(method === 'GET' || method === 'HEAD') && incoming.body) {
-        /** @todo This will using incoming.body in future versions because it supports binary */
-        init.body = incoming.bodyRaw
+        if (incoming.bodyBinary instanceof Buffer) {
+            init.body = incoming.bodyBinary
+        } else {
+            init.body = incoming.bodyRaw ?? null
+        }
     }
 
     return new Request(url, init)
 }
 
-export interface RequestPrototype extends GlobalRequestType {
+export interface RequestPrototype extends UndiciRequest {
     [incomingKey]: ReqContext
     [urlKey]: string
     [abortControllerKey]: AbortController
-    [requestCache]: Request | GlobalRequestType
+    [requestCache]: Request | UndiciRequest
 
     get method(): string
     get url(): string
 
     [getAbortController](): AbortController
-    [getRequestCache](): Request | GlobalRequestType
+    [getRequestCache](): Request | UndiciRequest
 }
 
 const requestPrototype = {
@@ -118,7 +128,7 @@ const requestPrototype = {
 
     [getRequestCache]() {
         this[abortControllerKey] ||= new AbortController()
-        // biome-ignore lint/suspicious/noAssignInExpressions: Saving memory
+
         return (this[requestCache] ||= newRequestFromIncoming(
             this.method,
             this.url,

@@ -59,17 +59,18 @@
         "!lib/*.d.ts.map"
     ],
     "devDependencies": {
-        "@mobily/ts-belt": "^3.13.1",
-        "@tsconfig/node21": "^21.0.3",
-        "@types/node": "^22.13.1",
-        "@biomejs/biome": "^1.9.4",
-        "nodemon": "^3.1.9",
-        "publint": "^0.3.3",
-        "tsup": "^8.3.6",
-        "typescript": "^5.7.3",
-        "micro": "^9.4.1"
+        "@tsconfig/node22": "^22.0.2",
+        "@types/node": "^22.15.21",
+        "@biomejs/biome": "^2.0.0-beta.5",
+        "nodemon": "^3.1.10",
+        "publint": "^0.3.12",
+        "tsup": "^8.5.0",
+        "typescript": "^5.8.3",
+        "micro": "^9.4.1",
+        "hono": "^4.7.10",
+        "undici-types": "^7.10.0"
     },
     "peerDependencies": {
-        "hono": "^4.4.12"
+        "hono": ">=4.7.0"
     }
 }

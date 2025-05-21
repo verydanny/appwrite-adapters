@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { Readable } from 'node:stream'
 
 import type { ReadableStream } from 'node:stream/web'
+import type { Headers as UndiciHeaders } from 'undici-types'
 import type { OutgoingHeaders } from './types.ts'
 
 export const openRuntimeRoot = 'src/function'
@@ -81,7 +82,7 @@ export async function nodeWebStreamToBuffer(
 // }
 
 export const buildOutgoingHttpHeaders = (
-    headers: Response['headers'],
+    headers: UndiciHeaders,
 ): OutgoingHeaders => {
     const res: OutgoingHeaders = {}
 
@@ -110,14 +111,11 @@ function forEachU<A>(a: A[], f: (arg: A) => void) {
 export function forEach<const A>(xs: A[], fn: (_1: A) => void): void
 export function forEach<const A>(fn: (_1: A) => void): (xs: A[]) => void
 export function forEach<const A>() {
-    // biome-ignore lint/style/noArguments: performance optimization
     if (arguments.length === 1) {
-        // biome-ignore lint/style/noArguments: performance optimization
         const args = arguments
         return function fn(data: A[]) {
             return forEachU(data, args[0])
         }
     }
-    // biome-ignore lint/style/noArguments: performance optimization
     return forEachU(arguments[0], arguments[1])
 }

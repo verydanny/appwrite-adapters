@@ -1,25 +1,25 @@
 import type {
+    createServer,
     ServerOptions as HttpServerOptions,
     ServerResponse as HttpServerResponse,
     IncomingHttpHeaders,
     IncomingMessage,
     OutgoingHttpHeaders,
     Server,
-    createServer,
 } from 'node:http'
 import type {
+    createServer as createHttp2Server,
+    createSecureServer as createSecureHttp2Server,
     Http2SecureServer,
     Http2Server,
     ServerOptions as Http2ServerOptions,
     Http2ServerRequest,
     Http2ServerResponse,
     SecureServerOptions as SecureHttp2ServerOptions,
-    createServer as createHttp2Server,
-    createSecureServer as createSecureHttp2Server,
 } from 'node:http2'
 import type {
-    ServerOptions as HttpsServerOptions,
     createServer as createHttpsServer,
+    ServerOptions as HttpsServerOptions,
 } from 'node:https'
 import type { Stream } from 'node:stream'
 import type { Hono } from 'hono'
@@ -289,6 +289,9 @@ export type LogContext = (message: string | JSONStub | unknown) => void
 export interface ReqContext {
     get bodyRaw(): string
     get body(): RequestInit['body']
+    get bodyText(): string
+    get bodyJson(): JSONStub
+    get bodyBinary(): Buffer
     headers: IncomingHeaders
     method: HTTPMethod
     url: string
@@ -300,9 +303,6 @@ export interface ReqContext {
     path: string
 
     /** @todo Implement in version 1.0.0+ */
-    // get bodyText(): string
-    // get bodyJson(): JSONStub
-    // get bodyBinary(): Buffer
 }
 
 export interface ResContext {

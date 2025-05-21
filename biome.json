@@ -1,18 +1,24 @@
 {
-    "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-    "organizeImports": {
-        "enabled": true
-    },
+    "$schema": "https://biomejs.dev/schemas/2.0.0-beta.5/schema.json",
+    "assist": { "actions": { "source": { "organizeImports": "on" } } },
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": true,
+            "recommended": false,
+            "complexity": {},
+            "correctness": {
+                "noUndeclaredDependencies": "error"
+            },
+            "nursery": {},
             "performance": {
                 "noBarrelFile": "error",
                 "noAccumulatingSpread": "error",
                 "noDelete": "error",
                 "noReExportAll": "error"
-            }
+            },
+            "security": {},
+            "style": {},
+            "suspicious": {}
         }
     },
     "formatter": {
@@ -36,6 +42,10 @@
         }
     },
     "files": {
-        "ignore": ["node_modules", "./packages/adapter-bun/server/**/*"]
+        "includes": [
+            "**",
+            "!**/node_modules",
+            "!packages/adapter-bun/server/**/*"
+        ]
     }
 }

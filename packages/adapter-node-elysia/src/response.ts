@@ -1,8 +1,12 @@
 // Define lightweight pseudo Response class and replace global.Response with it.
-import { buildOutgoingHttpHeaders, forEach } from './utils.ts'
 
-import type { BodyInit, Response as GlobalResponseType } from 'undici-types'
+import type {
+    BodyInit,
+    Response as GlobalResponseType,
+    ResponseInit,
+} from 'undici-types'
 import type { OutgoingHeaders, StatusCode } from './types.ts'
+import { buildOutgoingHttpHeaders, forEach } from './utils.ts'
 
 interface InternalBody {
     source: string | Uint8Array | FormData | Blob | null
@@ -11,13 +15,18 @@ interface InternalBody {
 }
 
 export const cacheKey = Symbol('cache')
-export const GlobalResponse = global.Response
+
+interface NodeResponseConstructor {
+    new (body?: BodyInit | null, init?: ResponseInit): GlobalResponseType
+    prototype: GlobalResponseType
+}
+
+export const GlobalResponse = global.Response as NodeResponseConstructor
 
 const responseCache = Symbol('responseCache')
 const getResponseCache = Symbol('getResponseCache')
 
 export interface Response extends GlobalResponseType {}
-// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: We're overriding existing classes, should be good
 export class Response {
     #body?: BodyInit | null
     #init?: ResponseInit;
@@ -28,7 +37,6 @@ export class Response {
     [getResponseCache]() {
         delete this[cacheKey]
 
-        // biome-ignore lint/suspicious/noAssignInExpressions: Easier to type knowing it will always be GlobalResponseType
         return (this[responseCache] ||= new GlobalResponse(
             this.#body,
             this.#init,
@@ -128,11 +136,9 @@ export function getInternalBody(
     }
 
     if (response instanceof Response) {
-        // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
         response = response[getResponseCache]()
     }
 
-    // biome-ignore lint/suspicious/noExplicitAny: Hard to type a vague symbol
     const state = (response as any)[stateKey] as
         | { body?: InternalBody }
         | undefined

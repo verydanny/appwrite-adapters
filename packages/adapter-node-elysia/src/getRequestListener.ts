@@ -6,15 +6,16 @@
 
 import { Readable } from 'node:stream'
 import {
+    getRequestCache,
     Request as LightweightRequest,
-    type RequestPrototype,
     newRequest,
+    type RequestPrototype,
     toRequestError,
 } from './request.ts'
 import {
-    Response as LightweightResponse,
     cacheKey,
     getInternalBody,
+    Response as LightweightResponse,
 } from './response.ts'
 import type {
     Context,
@@ -22,8 +23,8 @@ import type {
     FetchFunction,
     StatusCode,
 } from './types.js'
-// @ts-ignore
-import { buildOutgoingHttpHeaders, nodeWebStreamToBuffer } from './utils.ts'
+
+import { buildOutgoingHttpHeaders } from './utils.ts'
 
 const regBuffer = /^no$/i
 const regContentType = /^(application\/json\b|text\/(?!event-stream\b))/i
@@ -40,8 +41,7 @@ const handleFetchError = (e: unknown): Response =>
 const responseViaCache = async (
     res: LightweightResponse,
     outgoing: Context['res'],
-    // @ts-ignore
-    errorLogger: Context['error'],
+    _errorLogger: Context['error'],
 ) => {
     const [status, body, headers] = (res as Required<LightweightResponse>)[
         cacheKey
@@ -78,18 +78,15 @@ const responseViaResponseObject = async (
     if (res instanceof Promise) {
         if (options.errorHandler) {
             try {
-                // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
                 res = await res
             } catch (err) {
                 const errRes = await options.errorHandler(err)
                 if (!errRes) {
                     return
                 }
-                // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
                 res = errRes
             }
         } else {
-            // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
             res = await res.catch(handleFetchError)
         }
     }
@@ -228,7 +225,10 @@ export const getRequestListener = (
             req = newRequest(context.req, options.hostname)
 
             if (req) {
-                res = fetchCallback(req, context) as
+                res = fetchCallback(
+                    req[getRequestCache]() as unknown as Request,
+                    context,
+                ) as
                     | Response
                     | LightweightResponse
                     | Promise<Response>

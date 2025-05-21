@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'node:http'
-import type { Hono } from 'hono'
+import type { Elysia } from 'elysia'
 
 export type NormalizeString<
     Key extends string,
@@ -206,11 +206,14 @@ export type JSONStub = Record<string | number | symbol, unknown>
 export type FetchFunction = (
     request: Request,
     env: Context,
-) => ReturnType<Hono['fetch']>
+) => ReturnType<Elysia['fetch']>
 
 export interface ReqContext {
     get bodyRaw(): string
     get body(): RequestInit['body']
+    get bodyText(): string
+    get bodyJson(): JSONStub
+    get bodyBinary(): ArrayBuffer
     headers: IncomingHeaders
     method: HTTPMethod
     url: string
@@ -220,13 +223,6 @@ export interface ReqContext {
     port: number
     scheme: 'http' | 'https'
     path: string
-
-    /**
-     * @todo Implement this for version 1.0.0+
-     */
-    // get bodyText(): string
-    // get bodyJson(): JSONStub
-    // get bodyBinary(): Buffer
 }
 
 export type LogContext = (message: string | JSONStub | unknown) => void
@@ -236,6 +232,11 @@ export interface ResContext {
         body: string | ArrayBuffer | ReadableStream,
         statusCode?: StatusCode,
         headers?: OutgoingHeaders,
+    ) => void
+    binary: (
+        bytes: ArrayBuffer,
+        statusCode: Response['status'],
+        headers?: Record<string, string>,
     ) => void
     json: (
         body: JSONStub,
@@ -255,11 +256,6 @@ export interface ResContext {
     // text: (
     //     body: string,
     //     statusCode?: Response['status'],
-    //     headers?: Record<string, string>,
-    // ) => void
-    // binary: (
-    //     bytes: Buffer | Stream,
-    //     statusCode: Response['status'],
     //     headers?: Record<string, string>,
     // ) => void
     // start: (
