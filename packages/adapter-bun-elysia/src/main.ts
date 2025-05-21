@@ -1,10 +1,22 @@
-import type { Elysia } from 'elysia'
-import type { Context, FetchFunction, HTTPMethod, StatusCode } from './types'
+import { Elysia } from 'elysia'
+import type {
+    AppwriteContext,
+    ElysiaAppWithFetch,
+    HTTPMethod,
+    StatusCode,
+} from './types'
+
+export type AppwriteAdapterContext = {
+    log: AppwriteContext['log']
+    error: AppwriteContext['error']
+    res: AppwriteContext['res']
+    req: AppwriteContext['req']
+}
 
 const newRequestFromIncoming = (
     method: HTTPMethod,
     url: string,
-    incoming: Context['req'],
+    incoming: AppwriteContext['req'],
     abortController: AbortController,
 ) => {
     const init: RequestInit = {
@@ -17,7 +29,7 @@ const newRequestFromIncoming = (
         if (incoming.bodyBinary instanceof ArrayBuffer) {
             init.body = incoming.bodyBinary
         } else {
-            init.body = incoming.bodyRaw ?? null
+            init.body = incoming.body ?? null
         }
     }
 
@@ -37,27 +49,31 @@ const newRequestFromIncoming = (
     return new Request(url, init)
 }
 
-export function serve(app: Elysia) {
-    return async function handle(context: Context) {
-        const host = context.req.host
-        const fetch = app.fetch
+export function serve(elysiaApp: ElysiaAppWithFetch) {
+    return async function handle(appwriteContext: AppwriteContext) {
+        const host = appwriteContext.req.host
 
         try {
-            const url = new URL(context.req.url)
+            const url = new URL(appwriteContext.req.url)
 
             if (
                 url.hostname.length !== host.length &&
                 url.hostname !== host.replace(/:\d+$/, '')
             ) {
-                return context.error('Invalid host header')
+                return appwriteContext.error('Invalid host header')
             }
 
-            /** @todo: Cache Response and Request */
-            const request = fetch(
+            const parent = new Elysia().resolve(() => {
+                return {
+                    appwrite: appwriteContext,
+                }
+            })
+
+            const request = parent.use(elysiaApp as Elysia).fetch(
                 newRequestFromIncoming(
-                    context.req.method,
+                    appwriteContext.req.method,
                     url.href,
-                    context.req,
+                    appwriteContext.req,
                     /** @todo see if way to cache abort controller */
                     new AbortController(),
                 ),
@@ -69,42 +85,42 @@ export function serve(app: Elysia) {
                     const headers = unwrappedRequest.headers.toJSON()
 
                     if (unwrappedRequest.body instanceof ReadableStream) {
-                        return context.res.send(
+                        return appwriteContext.res.send(
                             unwrappedRequest.body,
                             unwrappedRequest.status as StatusCode,
                             headers,
                         )
                     }
 
-                    return context.res.binary(
+                    return appwriteContext.res.binary(
                         await unwrappedRequest.arrayBuffer(),
                         unwrappedRequest.status as StatusCode,
                         headers,
                     )
                 } catch (error) {
-                    return context.error(error)
+                    return appwriteContext.error(error)
                 }
             }
 
             const headers = request.headers.toJSON()
 
             if (request.body instanceof ReadableStream) {
-                return context.res.send(
+                return appwriteContext.res.send(
                     request.body,
                     request.status as StatusCode,
                     headers,
                 )
             }
 
-            return context.res.binary(
+            return appwriteContext.res.send(
                 await request.arrayBuffer(),
                 request.status as StatusCode,
                 headers,
             )
         } catch (error) {
-            context.error(error)
+            appwriteContext.error(error)
         }
 
-        return context.res.empty()
+        appwriteContext.res.empty()
     }
 }

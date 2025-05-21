@@ -16,7 +16,7 @@ const newRequestFromIncoming = (
         if (incoming.bodyBinary instanceof ArrayBuffer) {
             init.body = incoming.bodyBinary
         } else {
-            init.body = incoming.bodyRaw ?? null
+            init.body = incoming.body ?? null
         }
     }
 

@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders, OutgoingHttpHeaders } from 'node:http'
-import type { Elysia } from 'elysia'
+import type { Elysia, InferContext, SingletonBase } from 'elysia'
 
 export type NormalizeString<
     Key extends string,
@@ -203,10 +203,11 @@ export type OutgoingHeaders = Partial<OutgoingHttpHeaders & HeaderMap> & {
 
 export type JSONStub = Record<string | number | symbol, unknown>
 
-export type FetchFunction = (
-    request: Request,
-    env: Context,
-) => ReturnType<Elysia['fetch']>
+export type FetchFunction = (request: Request) => ReturnType<Elysia['fetch']>
+
+export interface ElysiaAppWithFetch {
+    fetch: Elysia['fetch']
+}
 
 export interface ReqContext {
     get bodyRaw(): string
@@ -268,13 +269,19 @@ export interface ResContext {
     // end: (headers?: Record<string, string>) => void
 }
 
-export interface Context {
+export interface AppwriteContext {
     req: ReqContext
     res: ResContext
     log: LogContext
     error: LogContext
 }
 
-export type AppwriteBindings = {
-    [K in keyof Context]: Context[K]
+export interface AppwriteElysiaSingleton extends SingletonBase {
+    derive: {
+        appwrite: AppwriteContext
+    }
 }
+
+export type ElysiaAppwriteContext = InferContext<
+    Elysia<'', AppwriteElysiaSingleton>
+>

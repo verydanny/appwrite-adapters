@@ -18,7 +18,7 @@ import {
     Response as LightweightResponse,
 } from './response.ts'
 import type {
-    Context,
+    AppwriteContext,
     CustomErrorHandler,
     FetchFunction,
     StatusCode,
@@ -40,8 +40,8 @@ const handleFetchError = (e: unknown): Response =>
 
 const responseViaCache = async (
     res: LightweightResponse,
-    outgoing: Context['res'],
-    _errorLogger: Context['error'],
+    outgoing: AppwriteContext['res'],
+    _errorLogger: AppwriteContext['error'],
 ) => {
     const [status, body, headers] = (res as Required<LightweightResponse>)[
         cacheKey
@@ -72,8 +72,10 @@ const responseViaResponseObject = async (
         | Promise<Response>
         | LightweightResponse
         | Promise<LightweightResponse>,
-    outgoing: Context['res'],
-    options: { errorHandler?: CustomErrorHandler | Context['error'] } = {},
+    outgoing: AppwriteContext['res'],
+    options: {
+        errorHandler?: CustomErrorHandler | AppwriteContext['error']
+    } = {},
 ) => {
     if (res instanceof Promise) {
         if (options.errorHandler) {
@@ -95,7 +97,7 @@ const responseViaResponseObject = async (
         return responseViaCache(
             res,
             outgoing,
-            options?.errorHandler as Context['error'],
+            options?.errorHandler as AppwriteContext['error'],
         )
     }
 
@@ -212,7 +214,7 @@ export const getRequestListener = (
         })
     }
 
-    return (context: Context) => {
+    return (context: AppwriteContext) => {
         let res:
             | undefined
             | Response

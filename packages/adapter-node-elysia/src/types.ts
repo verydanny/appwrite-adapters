@@ -22,7 +22,7 @@ import type {
     ServerOptions as HttpsServerOptions,
 } from 'node:https'
 import type { Stream } from 'node:stream'
-import type { Elysia } from 'elysia'
+import type { Elysia, InferContext, SingletonBase } from 'elysia'
 
 export type HttpBindings = {
     incoming: IncomingMessage
@@ -74,7 +74,6 @@ export type Options = {
 
 export type CustomErrorHandler = (
     err: unknown,
-    // biome-ignore lint/suspicious/noConfusingVoidType: need void
 ) => void | Response | Promise<void | Response>
 
 export type NormalizeString<
@@ -281,14 +280,14 @@ export type JSONStub = Record<string | number | symbol, unknown>
 
 export type FetchFunction = (
     request: Request,
-    env: Context,
+    env: AppwriteContext,
 ) => ReturnType<Elysia['fetch']>
 
 export type LogContext = (message: string | JSONStub | unknown) => void
 
 export interface ReqContext {
     get bodyRaw(): string
-    get body(): RequestInit['body']
+    get body(): import('undici-types').RequestInit['body']
     get bodyText(): string
     get bodyJson(): JSONStub
     get bodyBinary(): Buffer
@@ -346,16 +345,22 @@ export interface ResContext {
     // end: (headers?: Record<string, string>) => void
 }
 
-export interface Context {
+export interface AppwriteContext {
     req: ReqContext
     res: ResContext
     log: LogContext
     error: LogContext
 }
 
-export type AppwriteBindings = {
-    [K in keyof Context]: Context[K]
+export interface AppwriteElysiaSingleton extends SingletonBase {
+    derive: {
+        appwrite: AppwriteContext
+    }
 }
+
+export type ElysiaAppwriteContext = InferContext<
+    Elysia<'', AppwriteElysiaSingleton>
+>
 
 declare global {
     namespace NodeJS {

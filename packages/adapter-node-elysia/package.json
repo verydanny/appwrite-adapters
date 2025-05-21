@@ -52,7 +52,7 @@
     "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-node",
     "repository": {
         "type": "git",
-        "url": "https://github.com/verydanny/appwrite-adapters.git"
+        "url": "git+https://github.com/verydanny/appwrite-adapters.git"
     },
     "files": [
         "lib",
