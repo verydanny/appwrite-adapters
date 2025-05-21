@@ -23,11 +23,6 @@
             "require": "./lib/main.cjs",
             "import": "./lib/main.js"
         },
-        "./serveStatic": {
-            "types": "./lib/serveStatic.d.ts",
-            "require": "./lib/serveStatic.cjs",
-            "import": "./lib/serveStatic.js"
-        },
         "./types": {
             "types": "./lib/types.d.ts"
         }
@@ -36,9 +31,6 @@
         "*": {
             ".": [
                 "./lib/main.d.ts"
-            ],
-            "serveStatic": [
-                "./lib/serveStatic.d.ts"
             ],
             "types": [
                 "./lib/types.d.ts"

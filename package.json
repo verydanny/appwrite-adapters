@@ -1,33 +1,34 @@
 {
-	"name": "appwrite-adapters",
-	"module": "index.ts",
-	"type": "module",
-	"scripts": {
-		"lint": "biome check --write .",
-		"build": "bun --filter '*' build",
-		"types": "bun run tsc -b",
-		"package": "bun run types && bun run build"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.0.0-beta.5",
-		"@tsconfig/strictest": "^2.0.5",
-		"@changesets/changelog-github": "^0.5.1",
-		"@changesets/cli": "^2.29.4"
-	},
-	"peerDependencies": {
-		"typescript": "^5.8.3"
-	},
-	"private": true,
-	"workspaces": [
-		"packages/*"
-	],
-	"engines": {
-		"node": ">=22",
-		"npm": ">=10.5"
-	},
-	"packageManager": "bun@1.2.13",
-	"trustedDependencies": [
-		"@biomejs/biome",
-		"esbuild"
-	]
+    "name": "appwrite-adapters",
+    "module": "index.ts",
+    "type": "module",
+    "scripts": {
+        "lint": "biome check --write .",
+        "build": "bun --filter '*' build",
+        "types": "bun run tsc -b",
+        "package": "bun run types && bun run build"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.0.0-beta.5",
+        "@tsconfig/strictest": "^2.0.5",
+        "@changesets/changelog-github": "^0.5.1",
+        "@changesets/cli": "^2.29.4",
+        "tsup": "^8.5.0"
+    },
+    "peerDependencies": {
+        "typescript": "^5.8.3"
+    },
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "engines": {
+        "node": ">=22",
+        "npm": ">=10.5"
+    },
+    "packageManager": "bun@1.2.13",
+    "trustedDependencies": [
+        "@biomejs/biome",
+        "esbuild"
+    ]
 }

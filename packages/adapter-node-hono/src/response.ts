@@ -136,11 +136,9 @@ export function getInternalBody(
     }
 
     if (response instanceof Response) {
-        // biome-ignore lint/style/noParameterAssign: Saving memory by just reassigning
         response = response[getResponseCache]()
     }
 
-    // biome-ignore lint/suspicious/noExplicitAny: Hard to type a vague symbol
     const state = (response as any)[stateKey] as
         | { body?: InternalBody }
         | undefined

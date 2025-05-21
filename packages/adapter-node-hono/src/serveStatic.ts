@@ -155,7 +155,6 @@ export const serveStatic = (
 
         const size = stats.size
 
-        // biome-ignore lint/suspicious/noDoubleEquals: quicker comparison
         if (c.req.method == 'HEAD' || c.req.method == 'OPTIONS') {
             c.header('Content-Length', size.toString())
             c.status(200)
