@@ -1,0 +1,76 @@
+{
+    "name": "@gravlabs/appwrite-hono-adapter-node",
+    "version": "0.8.0",
+    "type": "module",
+    "main": "lib/main.js",
+    "module": "lib/main.js",
+    "scripts": {
+        "build": "tsup",
+        "postbuild": "bun run build:types",
+        "build:types": "tsc -b",
+        "postbuild:types": "publint",
+        "build:watch": "tsup --watch",
+        "lint": "biome lint ./src",
+        "lint:fix": "biome lint --write ./src",
+        "format": "biome format --write ./src",
+        "format:fix": "biome format --write ./src",
+        "start": "OPEN_RUNTIMES_ENTRYPOINT=server/test.js nodemon ./server/originalServer.cjs",
+        "start:faster": "OPEN_RUNTIMES_ENTRYPOINT=server/test.js nodemon ./server/fasterServer.cjs"
+    },
+    "exports": {
+        ".": {
+            "types": "./lib/main.d.ts",
+            "require": "./lib/main.cjs",
+            "import": "./lib/main.js"
+        },
+        "./serveStatic": {
+            "types": "./lib/serveStatic.d.ts",
+            "require": "./lib/serveStatic.cjs",
+            "import": "./lib/serveStatic.js"
+        },
+        "./types": {
+            "types": "./lib/types.d.ts"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            ".": [
+                "./lib/main.d.ts"
+            ],
+            "serveStatic": [
+                "./lib/serveStatic.d.ts"
+            ],
+            "types": [
+                "./lib/types.d.ts"
+            ]
+        }
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org",
+        "access": "public"
+    },
+    "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-node",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/verydanny/appwrite-adapters.git"
+    },
+    "files": [
+        "lib",
+        "!lib/*.d.ts.map"
+    ],
+    "devDependencies": {
+        "@tsconfig/node22": "^22.0.2",
+        "@types/node": "^22.15.21",
+        "@biomejs/biome": "^2.0.0-beta.5",
+        "nodemon": "^3.1.10",
+        "publint": "^0.3.12",
+        "tsup": "^8.5.0",
+        "typescript": "^5.8.3",
+        "micro": "^9.4.1",
+        "hono": "^4.7.10",
+        "undici-types": "^7.10.0"
+    },
+    "peerDependencies": {
+        "hono": ">=4.7.0"
+    }
+}

@@ -1,0 +1,65 @@
+{
+    "name": "@gravlabs/appwrite-elysia-adapter-bun",
+    "version": "0.0.6",
+    "type": "module",
+    "main": "lib/main.js",
+    "module": "lib/main.js",
+    "types": "lib/main.d.ts",
+    "scripts": {
+        "build": "bun --minify-whitespace --minify-syntax --external=elysia build --target bun --sourcemap=external --outdir lib ./src/main.ts",
+        "postbuild": "bun run build:types",
+        "build:types": "tsc -b",
+        "postbuild:types": "publint",
+        "build:watch": "tsup --watch",
+        "lint": "biome lint ./src",
+        "lint:fix": "biome lint --write ./src",
+        "format": "biome format --write ./src",
+        "format:fix": "biome format --write ./src",
+        "start": "OPEN_RUNTIMES_ENTRYPOINT=test.ts bun run --watch --hot server/server.ts"
+    },
+    "exports": {
+        ".": {
+            "types": "./lib/main.d.ts",
+            "import": "./lib/main.js"
+        },
+        "./types.d.ts": {
+            "types": "./lib/types.d.ts"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            ".": [
+                "./lib/main.d.ts"
+            ],
+            "./types.d.ts": [
+                "./lib/types.d.ts"
+            ]
+        }
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org",
+        "access": "public"
+    },
+    "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-bun-elysia",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/verydanny/appwrite-adapters.git"
+    },
+    "files": [
+        "lib",
+        "!lib/*.d.ts.map"
+    ],
+    "devDependencies": {
+        "@tsconfig/bun": "1.0.7",
+        "@biomejs/biome": "^2.0.0-beta.5",
+        "publint": "^0.3.12",
+        "@types/bun": "^1.2.13",
+        "@types/node": "^22.15.21",
+        "tsup": "^8.5.0",
+        "typescript": "^5.8.3",
+        "elysia": "^1.3.1"
+    },
+    "peerDependencies": {
+        "elysia": ">=1.3.0"
+    }
+}

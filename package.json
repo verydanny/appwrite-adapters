@@ -9,21 +9,26 @@
         "package": "bun run types && bun run build"
     },
     "devDependencies": {
-        "@biomejs/biome": "^1.9.4",
-        "@types/bun": "latest",
+        "@biomejs/biome": "^2.0.0-beta.5",
         "@tsconfig/strictest": "^2.0.5",
-        "@changesets/changelog-github": "^0.5.0",
-        "@changesets/cli": "^2.27.12"
+        "@changesets/changelog-github": "^0.5.1",
+        "@changesets/cli": "^2.29.4",
+        "tsup": "^8.5.0"
     },
     "peerDependencies": {
-        "typescript": "^5.5.3"
+        "typescript": "^5.8.3"
     },
     "private": true,
-    "workspaces": ["packages/*"],
+    "workspaces": [
+        "packages/*"
+    ],
     "engines": {
-        "node": ">=20.14",
+        "node": ">=22",
         "npm": ">=10.5"
     },
-    "packageManager": "bun@1.1.18",
-    "trustedDependencies": ["@biomejs/biome", "esbuild"]
+    "packageManager": "bun@1.2.13",
+    "trustedDependencies": [
+        "@biomejs/biome",
+        "esbuild"
+    ]
 }

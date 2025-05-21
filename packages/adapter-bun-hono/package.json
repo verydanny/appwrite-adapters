@@ -1,0 +1,71 @@
+{
+    "name": "@gravlabs/appwrite-hono-adapter-bun",
+    "version": "0.6.0",
+    "type": "module",
+    "main": "lib/main.js",
+    "module": "lib/main.js",
+    "scripts": {
+        "build": "bun --minify-whitespace --minify-syntax --external=elysia build --target bun --sourcemap=external --outdir lib ./src/main.ts ./src/serveStatic.ts ./src/utils.ts",
+        "postbuild": "bun run build:types",
+        "build:types": "tsc -b",
+        "postbuild:types": "publint",
+        "build:watch": "tsup --watch",
+        "lint": "biome lint ./src",
+        "lint:fix": "biome lint --write ./src",
+        "format": "biome format --write ./src",
+        "format:fix": "biome format --write ./src",
+        "start": "OPEN_RUNTIMES_ENTRYPOINT=test.ts bun run --watch --hot server/server.ts"
+    },
+    "exports": {
+        ".": {
+            "types": "./lib/main.d.ts",
+            "import": "./lib/main.js"
+        },
+        "./serveStatic": {
+            "types": "./lib/serveStatic.d.ts",
+            "import": "./lib/serveStatic.js"
+        },
+        "./types": {
+            "types": "./lib/types.d.ts"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            ".": [
+                "./lib/main.d.ts"
+            ],
+            "serveStatic": [
+                "./lib/serveStatic.d.ts"
+            ],
+            "types": [
+                "./lib/types.d.ts"
+            ]
+        }
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org",
+        "access": "public"
+    },
+    "homepage": "https://github.com/verydanny/appwrite-adapters/tree/main/packages/adapter-bun",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/verydanny/appwrite-adapters.git"
+    },
+    "files": [
+        "lib",
+        "!lib/*.d.ts.map"
+    ],
+    "devDependencies": {
+        "@tsconfig/bun": "1.0.7",
+        "@biomejs/biome": "^2.0.0-beta.5",
+        "publint": "^0.3.12",
+        "@types/bun": "^1.2.13",
+        "@types/node": "^22.15.21",
+        "tsup": "^8.5.0",
+        "typescript": "^5.8.3",
+        "hono": "^4.7.10"
+    },
+    "peerDependencies": {
+        "hono": ">=4.7.0"
+    }
+}

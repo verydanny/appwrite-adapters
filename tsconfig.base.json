@@ -6,11 +6,10 @@
         "sourceMap": true,
         "composite": true,
 
-        "lib": ["ESNext", "DOM"],
+        "lib": ["ESNext"],
         "target": "ESNext",
         "module": "ESNext",
         "moduleDetection": "force",
-        "jsx": "react-jsx",
         "allowJs": true,
 
         "moduleResolution": "bundler",
