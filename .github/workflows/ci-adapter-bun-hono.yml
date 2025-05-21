@@ -3,18 +3,18 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packages/adapter-bun/**'
+      - "packages/adapter-bun-hono/**"
   pull_request:
-    branches: ['*']
+    branches: ["*"]
     paths:
-      - 'packages/adapter-bun/**'
+      - "packages/adapter-bun-hono/**"
 
 env:
-  PACKAGE_NAME: adapter-bun
+  PACKAGE_NAME: adapter-bun-hono
 
 jobs:
   ci:
-    name: Build and Lint adapter-bun
+    name: Build and Lint adapter-bun-hono
     runs-on: ubuntu-latest
     steps:
       - name: Pull Branch
